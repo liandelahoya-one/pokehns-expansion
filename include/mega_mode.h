@@ -12,6 +12,12 @@ bool32 IsMegaRandomizerModeEnabled(void);
 enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType);
 void MegaMode_GrantStonesForSpecies(u16 species);
 
+// Three repeatable, Mega-capable species choices for Elm's laboratory.
+// The native script hook updates PLAYER_STARTER_SPECIES (VAR_TEMP_2) to
+// ensure the preview, dialogue, and received Pokemon all agree.
+u16 MegaMode_GetStarterSpecies(u8 slot);
+void MegaMode_OverrideLabStarterSpecies(void);
+
 // Trainer parties are generated using their original size. Only forced Mega
 // slots are replaced with a compatible type-themed base species.
 enum Type MegaMode_GetTrainerTheme(u16 trainerId);
