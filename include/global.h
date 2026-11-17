@@ -338,6 +338,9 @@ struct ChallengeSettings
     u8 tx_Features_FrontierBans:1;
     u8 tx_Difficulty_EscapeRopeDig:1;
     u8 tx_Features_ShinyChance:4;
+    // Mega Mode occupies a spare bit in the final settings byte. It must not
+    // shift the save layout or alter any existing setting's offset.
+    u8 tx_Random_MegaMode:1;
 };
 
 struct SaveBlock3
