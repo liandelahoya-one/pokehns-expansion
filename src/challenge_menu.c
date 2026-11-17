@@ -91,6 +91,7 @@ enum {
     ITEM_RANDOM_TYPE_EFFEC,
     ITEM_RANDOM_ITEMS,
     ITEM_RANDOM_CHAOS,
+    ITEM_RANDOM_MEGA_MODE,
     ITEM_RANDOM_NEXT,
     ITEM_RANDOM_COUNT,
 };
@@ -197,6 +198,7 @@ static const u8 sMidGameLockPolicy[TAB_COUNT * MAX_ITEMS_PER_TAB] = {
     [TAB_RANDOMIZER * MAX_ITEMS_PER_TAB + ITEM_RANDOM_TYPE_EFFEC]  = LOCK_ONEWAY_DOWN,
     [TAB_RANDOMIZER * MAX_ITEMS_PER_TAB + ITEM_RANDOM_ITEMS]       = LOCK_ONEWAY_DOWN,
     [TAB_RANDOMIZER * MAX_ITEMS_PER_TAB + ITEM_RANDOM_CHAOS]       = LOCK_ONEWAY_DOWN,
+    [TAB_RANDOMIZER * MAX_ITEMS_PER_TAB + ITEM_RANDOM_MEGA_MODE]   = LOCK_ONEWAY_DOWN,
     // MAP_BASED, SIMILAR and GEN_SCOPE are LOCK_FREE (default 0) -- GEN_SCOPE is
     // deliberately adjustable in both directions mid-run.
     // TAB_NUZLOCKE
@@ -768,6 +770,10 @@ static const u8 *const sDesc_RandomChaos[] = {
     COMPOUND_STRING("Chaos mode disabled."),
     COMPOUND_STRING("Every above chosen option will be\nvery chaotic. NOT recommended!"),
 };
+static const u8 *const sDesc_MegaMode[] = {
+    COMPOUND_STRING("Original Mega rules apply."),
+    COMPOUND_STRING("Unrestricted Megas, matching stones,\nand themed Mega boss teams."),
+};
 static const u8 *const sDesc_RandomNext[] = {
     COMPOUND_STRING("Continue to Nuzlocke options."),
 };
@@ -874,6 +880,12 @@ static const struct ChallengeMenuItem sTabItems_Randomizer[] = {
         .descriptions = sDesc_RandomChaos,
         .numChoices   = 2,
         .choiceNames  = sChoices_OffChaos,
+    },
+    [ITEM_RANDOM_MEGA_MODE] = {
+        .name         = COMPOUND_STRING("MEGA MODE"),
+        .descriptions = sDesc_MegaMode,
+        .numChoices   = 2,
+        .choiceNames  = sChoices_OffOn,
     },
     [ITEM_RANDOM_NEXT] = {
         .name         = COMPOUND_STRING("NEXT"),
@@ -1821,6 +1833,10 @@ static void ProcessLeftRight(void)
         if (sMenu->currentTab == TAB_MODE && itemIndex == ITEM_MODE_GAMEMODE && *sel == 0)
             ApplyRecommendedPresets();
 
+        // Mega Mode never remains selected when Randomizer is switched OFF.
+        if (sMenu->currentTab == TAB_RANDOMIZER && itemIndex == ITEM_RANDOM_OFF_ON && *sel == 0)
+            *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_MODE) = 0;
+
         // Nuzlocke OFF or EASY — reset sub-options to defaults
         if (sMenu->currentTab == TAB_NUZLOCKE && itemIndex == ITEM_NUZLOCKE_NUZLOCKE
             && (*sel == 0 || *sel == 1))
@@ -2003,6 +2019,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
         cs->tx_Random_TypeEffectiveness= 0;
         cs->tx_Random_Items            = 0;
         cs->tx_Random_Chaos            = 0;
+        cs->tx_Random_MegaMode         = 0;
     }
     else
     {
@@ -2022,6 +2039,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
         cs->tx_Random_TypeEffectiveness= *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_TYPE_EFFEC);
         cs->tx_Random_Items            = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_ITEMS);
         cs->tx_Random_Chaos            = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_CHAOS);
+        cs->tx_Random_MegaMode         = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_MODE);
     }
 
     // Nuzlocke tab — decompose selection back to 3 bits (matches HnS encoding)
@@ -2226,7 +2244,7 @@ void CB2_InitChallengeMenu(void)
               || cs->tx_Random_Type || cs->tx_Random_Moves
               || cs->tx_Random_Abilities || cs->tx_Random_Evolutions
               || cs->tx_Random_EvolutionMethods || cs->tx_Random_TypeEffectiveness
-              || cs->tx_Random_Items) ? 1 : 0;
+              || cs->tx_Random_Items || cs->tx_Random_MegaMode) ? 1 : 0;
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_STARTER)     = cs->tx_Random_Starter;
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_WILD_PKMN)   = cs->tx_Random_WildPokemon;
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MAP_BASED)  = cs->tx_Random_MapBased;
@@ -2243,6 +2261,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_TYPE_EFFEC)  = cs->tx_Random_TypeEffectiveness;
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_ITEMS)       = cs->tx_Random_Items;
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_CHAOS)       = cs->tx_Random_Chaos;
+            *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_MODE)   = cs->tx_Random_MegaMode;
 
             // Nuzlocke tab — 3 bits → 4 selection states (matches HnS encoding)
             if (cs->tx_Challenges_Nuzlocke && cs->tx_Challenges_NuzlockeHardcore)
