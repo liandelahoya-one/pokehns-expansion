@@ -548,6 +548,11 @@ static const u8 *const sChoices_ShinyChance[] = {
     COMPOUND_STRING("2048"),
     COMPOUND_STRING("1024"),
     COMPOUND_STRING("512"),
+    COMPOUND_STRING("256"),
+    COMPOUND_STRING("128"),
+    COMPOUND_STRING("64"),
+    COMPOUND_STRING("32"),
+    COMPOUND_STRING("16"),
 };
 
 static const u8 *const sChoices_Nuzlocke[] = {
@@ -642,6 +647,11 @@ static const u8 *const sDesc_ShinyChance[] = {
     COMPOUND_STRING("Decent chance of SHINY encounter."),
     COMPOUND_STRING("High chance of SHINY encounter."),
     COMPOUND_STRING("Very high chance of SHINY encounter."),
+    COMPOUND_STRING("SHINY chance: 1 in 256."),
+    COMPOUND_STRING("SHINY chance: 1 in 128."),
+    COMPOUND_STRING("SHINY chance: 1 in 64."),
+    COMPOUND_STRING("SHINY chance: 1 in 32."),
+    COMPOUND_STRING("SHINY chance: 1 in 16."),
 };
 static const u8 *const sDesc_ItemDrop[] = {
     COMPOUND_STRING("Wild {PKMN} items will be only\nobtainable via capture or THIEF."),
@@ -669,7 +679,7 @@ static const struct ChallengeMenuItem sTabItems_Features[] = {
     [ITEM_FEATURES_SHINY_CHANCE] = {
         .name         = COMPOUND_STRING("SHINY CHANCE"),
         .descriptions = sDesc_ShinyChance,
-        .numChoices   = 5,
+        .numChoices   = ARRAY_COUNT(sChoices_ShinyChance),
         .choiceNames  = sChoices_ShinyChance,
     },
     [ITEM_FEATURES_SHINY_COLOR] = {
