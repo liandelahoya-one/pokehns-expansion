@@ -186,16 +186,6 @@ void MegaMode_OverrideLabStarterSpecies(void)
         VarSet(VAR_TEMP_2, starter);
 }
 
-// Johto badge count is used for the non-gym boss tier.
-static u8 GetMegaModeBadgeCount(void)
-{
-    u8 badges = 0;
-    for (u16 flag = FLAG_BADGE01_GET; flag < FLAG_BADGE01_GET + 8; flag++)
-        if (FlagGet(flag))
-            badges++;
-    return badges;
-}
-
 enum Type MegaMode_GetTrainerTheme(u16 trainerId)
 {
     switch (trainerId)
@@ -335,16 +325,17 @@ u8 MegaMode_GetTrainerMegaCount(u16 trainerId, u8 partySize)
 
     switch (trainerId)
     {
+    // Every gym leader is a full Mega team from their first encounter.
+    // Rival, Rocket executive and other named boss battles follow the same
+    // rule; their original party sizes and levels are retained.
     case TRAINER_FALKNER_1_HNS:
     case TRAINER_FALKNER_2_HNS:
     case TRAINER_BUGSY_1_HNS:
     case TRAINER_BUGSY_2_HNS:
-        count = 1; break;
     case TRAINER_WHITNEY_1_HNS:
     case TRAINER_WHITNEY_2_HNS:
     case TRAINER_MORTY_1_HNS:
     case TRAINER_MORTY_2_HNS:
-        count = 2; break;
     case TRAINER_CHUCK_1_HNS:
     case TRAINER_CHUCK_2_HNS:
     case TRAINER_CHUCK_1_2_HNS:
@@ -353,13 +344,12 @@ u8 MegaMode_GetTrainerMegaCount(u16 trainerId, u8 partySize)
     case TRAINER_JASMINE_2_HNS:
     case TRAINER_JASMINE_1_2_HNS:
     case TRAINER_JASMINE_1_3_HNS:
-        count = 3; break;
     case TRAINER_PRYCE_1_HNS:
     case TRAINER_PRYCE_2_HNS:
     case TRAINER_PRYCE_1_2_HNS:
     case TRAINER_PRYCE_1_3_HNS:
-        count = 4; break;
-    // Story rival encounters and named Rocket executives follow badge progress.
+    // Story rivals, Rocket executives, Eusine and Giovanni.
+
     case TRAINER_RIVAL_CHIKORITA_1_HNS:
     case TRAINER_RIVAL_CHIKORITA_2_HNS:
     case TRAINER_RIVAL_CHIKORITA_3_HNS:
@@ -393,11 +383,7 @@ u8 MegaMode_GetTrainerMegaCount(u16 trainerId, u8 partySize)
     case TRAINER_ARIANA_2_HNS:
     case TRAINER_EUSINE_HNS:
     case TRAINER_GIOVANNI_HNS:
-    {
-        u8 badges = GetMegaModeBadgeCount();
-        count = badges < 2 ? 1 : badges < 4 ? 2 : badges < 6 ? 3 : badges < 8 ? 4 : partySize;
-        break;
-    }
+        count = partySize; break;
     // Clair, the Elite Four, champion, Kanto leaders and post-game rematches
     // use as many Mega-capable slots as the ORIGINAL party already contains.
     case TRAINER_CLAIR_1_HNS: case TRAINER_CLAIR_2_HNS:
@@ -436,6 +422,12 @@ u8 MegaMode_GetTrainerMegaCount(u16 trainerId, u8 partySize)
     case TRAINER_LANCE_POSTOBC_HNS:
     case TRAINER_RED_HNS:
     case TRAINER_RED_POSTOBC_HNS:
+    // The five Kimono Girls are fixed story-boss encounters.
+    case TRAINER_NAOKO_HNS:
+    case TRAINER_SAYO_HNS:
+    case TRAINER_ZUKI_HNS:
+    case TRAINER_KUNI_HNS:
+    case TRAINER_MIKI_HNS:
         count = partySize; break;
     // Progressive minimum Mega counts for each gym's actual trainers.
     case TRAINER_ROD_HNS:
