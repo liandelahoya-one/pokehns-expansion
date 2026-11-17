@@ -51,6 +51,8 @@ enum RandomizerReason
     RANDOMIZER_REASON_EVOLUTION,
     RANDOMIZER_REASON_EVO_METHOD,
     RANDOMIZER_REASON_TYPE_EFFECTIVENESS,
+    // Appended without shifting the preexisting seed streams.
+    RANDOMIZER_REASON_MEGA_WILD_ENCOUNTER,
 };
 
 enum RandomizerOption {
