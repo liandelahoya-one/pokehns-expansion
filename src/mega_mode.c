@@ -249,6 +249,39 @@ u8 MegaMode_GetTrainerMegaCount(u16 trainerId, u8 partySize)
     case TRAINER_PRYCE_1_2_HNS:
     case TRAINER_PRYCE_1_3_HNS:
         count = 4; break;
+    // Story rival encounters and named Rocket executives follow badge progress.
+    case TRAINER_RIVAL_CHIKORITA_1_HNS:
+    case TRAINER_RIVAL_CHIKORITA_2_HNS:
+    case TRAINER_RIVAL_CHIKORITA_3_HNS:
+    case TRAINER_RIVAL_CHIKORITA_4_HNS:
+    case TRAINER_RIVAL_CHIKORITA_5_HNS:
+    case TRAINER_RIVAL_CHIKORITA_6_HNS:
+    case TRAINER_RIVAL_CHIKORITA_7_HNS:
+    case TRAINER_RIVAL_CYNDAQUIL_1_HNS:
+    case TRAINER_RIVAL_CYNDAQUIL_2_HNS:
+    case TRAINER_RIVAL_CYNDAQUIL_3_HNS:
+    case TRAINER_RIVAL_CYNDAQUIL_4_HNS:
+    case TRAINER_RIVAL_CYNDAQUIL_5_HNS:
+    case TRAINER_RIVAL_CYNDAQUIL_6_HNS:
+    case TRAINER_RIVAL_CYNDAQUIL_7_HNS:
+    case TRAINER_RIVAL_TOTODILE_1_HNS:
+    case TRAINER_RIVAL_TOTODILE_2_HNS:
+    case TRAINER_RIVAL_TOTODILE_3_HNS:
+    case TRAINER_RIVAL_TOTODILE_4_HNS:
+    case TRAINER_RIVAL_TOTODILE_5_HNS:
+    case TRAINER_RIVAL_TOTODILE_6_HNS:
+    case TRAINER_RIVAL_TOTODILE_7_HNS:
+    case TRAINER_PROTON_1_HNS:
+    case TRAINER_PROTON_2_HNS:
+    case TRAINER_PETREL_1_HNS:
+    case TRAINER_PETREL_2_HNS:
+    case TRAINER_ARCHER_HNS:
+    case TRAINER_ARCHER_1_HNS:
+    case TRAINER_ARCHER_4_HNS:
+    case TRAINER_ARCHER_5_HNS:
+    case TRAINER_ARIANA_1_HNS:
+    case TRAINER_ARIANA_2_HNS:
+    case TRAINER_EUSINE_HNS:
     case TRAINER_GIOVANNI_HNS:
     {
         u8 badges = GetMegaModeBadgeCount();
@@ -291,6 +324,8 @@ u8 MegaMode_GetTrainerMegaCount(u16 trainerId, u8 partySize)
     case TRAINER_BRUNO_POSTOBC_HNS:
     case TRAINER_KAREN_POSTOBC_HNS:
     case TRAINER_LANCE_POSTOBC_HNS:
+    case TRAINER_RED_HNS:
+    case TRAINER_RED_POSTOBC_HNS:
         count = partySize; break;
     // Progressive minimum Mega counts for each gym's actual trainers.
     case TRAINER_ROD_HNS:
