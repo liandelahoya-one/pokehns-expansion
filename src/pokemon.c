@@ -83,7 +83,9 @@ extern u16 gSpecialVar_ItemId;
 
 #define FRIENDSHIP_EVO_THRESHOLD ((P_FRIENDSHIP_EVO_THRESHOLD >= GEN_8) ? 160 : 220)
 
-static const u32 sShinyOddsTable[] = { 8, 16, 32, 64, 128 };
+// These are thresholds out of 65536, corresponding to 1/8192 through 1/16.
+// Alternate shiny palettes are controlled independently and remain enabled.
+static const u32 sShinyOddsTable[] = { 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
 
 u32 GetShinyOdds(void)
 {
