@@ -1,4 +1,5 @@
 #include "global.h"
+#include "challenge_menu.h"
 #include "mega_mode.h"
 #include "item.h"
 #include "event_data.h"
@@ -79,6 +80,110 @@ void MegaMode_GrantStonesForSpecies(u16 species)
         if (!AddBagItem(stone, 1))
             AddPCItem(stone, 1);
     }
+}
+
+// Mega Mode starter picks must stay identical across all three Poké Balls,
+// including when the player declines an option and checks another one.
+#define MEGA_MODE_STARTER_COUNT 3
+EWRAM_DATA static u16 sMegaModeStarterChoices[MEGA_MODE_STARTER_COUNT] = {SPECIES_NONE};
+EWRAM_DATA static u32 sMegaModeStarterSeed;
+EWRAM_DATA static u16 sMegaModeStarterSettings;
+
+u16 MegaMode_GetStarterSpecies(u8 slot)
+{
+    u32 seed = 0;
+    u16 settings = 0;
+    u16 chosen[MEGA_MODE_STARTER_COUNT] = {SPECIES_NONE};
+    u32 eligibleCount = 0;
+
+    if (!IsMegaRandomizerModeEnabled() || slot >= MEGA_MODE_STARTER_COUNT)
+        return SPECIES_NONE;
+
+#if RANDOMIZER_AVAILABLE
+    seed = GetRandomizerSeed();
+    settings = (gSaveBlock3Ptr->challengeSettings.tx_Random_GenScope << 0)
+             | (gSaveBlock3Ptr->challengeSettings.tx_Random_IncludeLegendaries << 1)
+             | (gSaveBlock3Ptr->challengeSettings.tx_Random_Type << 2)
+             | (gSaveBlock3Ptr->challengeSettings.tx_Challenges_OneTypeChallenge << 3);
+
+    if (sMegaModeStarterChoices[0] != SPECIES_NONE
+     && sMegaModeStarterSeed == seed
+     && sMegaModeStarterSettings == settings)
+        return sMegaModeStarterChoices[slot];
+
+    // The abilities stream is deterministic even when Chaos randomizer is
+    // active. This prevents the three choices changing between interactions.
+    struct Sfc32State rng = RandomizerRandSeed(RANDOMIZER_REASON_ABILITIES,
+                                              0x4D454741, 0x53544152);
+#endif
+
+    // Prefer candidates that also satisfy a simultaneous One Type Challenge.
+    // If that has no eligible Mega forms, fall back to the Mega-capable pool.
+    for (u32 pass = 0; pass < 2; pass++)
+    {
+        eligibleCount = 0;
+        for (u32 species = 1; species < NUM_SPECIES; species++)
+        {
+            if (!IsSpeciesEnabled(species)
+             || gSpeciesInfo[species].isMegaEvolution
+             || MegaMode_GetStoneForSpecies(species, TYPE_NONE) == ITEM_NONE)
+                continue;
+#if RANDOMIZER_AVAILABLE
+            if (!IsSpeciesInGenScope(species))
+                continue;
+            if (!gSaveBlock3Ptr->challengeSettings.tx_Random_IncludeLegendaries
+             && (gSpeciesInfo[species].isRestrictedLegendary
+              || gSpeciesInfo[species].isSubLegendary
+              || gSpeciesInfo[species].isMythical))
+                continue;
+#endif
+            if (pass == 0 && IsOneTypeChallengeActive()
+             && !DoesSpeciesPassOneTypeChallenge(species))
+                continue;
+
+            // Reservoir sampling: each eligible base species has an equal
+            // chance to appear, without allocating a large candidate array.
+            if (eligibleCount < MEGA_MODE_STARTER_COUNT)
+            {
+                chosen[eligibleCount] = species;
+            }
+            else
+            {
+#if RANDOMIZER_AVAILABLE
+                u32 replaceIndex = RandomizerNextRange(&rng, eligibleCount + 1);
+#else
+                u32 replaceIndex = Random() % (eligibleCount + 1);
+#endif
+                if (replaceIndex < MEGA_MODE_STARTER_COUNT)
+                    chosen[replaceIndex] = species;
+            }
+            eligibleCount++;
+        }
+        if (eligibleCount > 0)
+            break;
+    }
+
+    // Small monotype pools can have only one or two distinct Mega Pokémon;
+    // repeating an eligible one is preferable to showing an ineligible starter.
+    if (eligibleCount > 0)
+    {
+        for (u32 i = eligibleCount; i < MEGA_MODE_STARTER_COUNT; i++)
+            chosen[i] = chosen[i % eligibleCount];
+
+        for (u32 i = 0; i < MEGA_MODE_STARTER_COUNT; i++)
+            sMegaModeStarterChoices[i] = chosen[i];
+        sMegaModeStarterSeed = seed;
+        sMegaModeStarterSettings = settings;
+    }
+
+    return chosen[slot];
+}
+
+void MegaMode_OverrideLabStarterSpecies(void)
+{
+    u16 starter = MegaMode_GetStarterSpecies(VarGet(VAR_STARTER_MON));
+    if (starter != SPECIES_NONE)
+        VarSet(VAR_TEMP_2, starter);
 }
 
 // Johto badge count is used for the non-gym boss tier.
