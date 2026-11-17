@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "battle.h"
 #include "battle_hold_effects.h"
 #include "battle_message.h"
@@ -11196,7 +11197,13 @@ static void Cmd_givecaughtmon(void)
                 break;
         }
 
-        if (GiveCapturedMonToPlayer(caughtMon) != MON_GIVEN_TO_PARTY
+        // Award a compatible stone only when the capture actually delivered
+        // a Pokemon to the party or storage. Full boxes are not a capture.
+        u32 capturedResult = GiveCapturedMonToPlayer(caughtMon);
+        if (capturedResult != MON_CANT_GIVE)
+            MegaMode_GrantStonesForSpecies(GetMonData(caughtMon, MON_DATA_SPECIES));
+
+        if (capturedResult != MON_GIVEN_TO_PARTY
          && gBattleCommunication[MULTISTRING_CHOOSER] != B_MSG_SWAPPED_INTO_PARTY)
         {
             if (!ShouldShowBoxWasFullMessage())
