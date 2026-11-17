@@ -1,0 +1,53 @@
+name: Heart & Soul Mega Mode ROM
+
+on:
+  push:
+    branches:
+      - feature/mega-randomizer-mode
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mega-rom-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-hns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout game source
+        uses: actions/checkout@v4
+
+      - name: Install Game Boy Advance toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi \
+            libpng-dev python3
+
+      - name: Compile Heart and Soul
+        run: make -j4 hns
+
+      - name: Validate ROM header and save artifact
+        run: |
+          test -s pokehns.gba
+          python3 - <<'PY'
+          from pathlib import Path
+          data = Path("pokehns.gba").read_bytes()
+          assert len(data) >= 8 * 1024 * 1024, "ROM is unexpectedly small"
+          assert data[0xA0:0xA0+11] == b'POKEMON HNS', "Not a Heart & Soul build"
+          assert data[0xAC:0xB0] == b'BPEE', "Unexpected game code"
+          print(f"ROM size: {len(data)} bytes")
+          PY
+          mv pokehns.gba HeartSoul_MegaMode_Test.gba
+
+      - name: Upload one playable ROM
+        uses: actions/upload-artifact@v4
+        with:
+          name: HeartSoul-Mega-Mode-GBA
+          path: HeartSoul_MegaMode_Test.gba
+          if-no-files-found: error

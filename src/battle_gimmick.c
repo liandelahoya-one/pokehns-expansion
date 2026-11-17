@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
@@ -77,6 +78,10 @@ bool32 ShouldTrainerBattlerUseGimmick(enum BattlerId battler, enum Gimmick gimmi
     // Check the trainer party data to see if a gimmick is intended.
     else
     {
+        if (gimmick == GIMMICK_MEGA && IsMegaRandomizerModeEnabled()
+         && GetBattlerSide(battler) == B_SIDE_OPPONENT
+         && MegaMode_SpeciesHasStone(gBattleMons[battler].species, gBattleMons[battler].item))
+            return TRUE;
         if (gimmick == GIMMICK_TERA && gBattleStruct->opponentMonCanTera & 1 << gBattlerPartyIndexes[battler])
             return TRUE;
         if (gimmick == GIMMICK_DYNAMAX && gBattleStruct->opponentMonCanDynamax & 1 << gBattlerPartyIndexes[battler])
@@ -90,6 +95,11 @@ bool32 ShouldTrainerBattlerUseGimmick(enum BattlerId battler, enum Gimmick gimmi
 // Returns whether a trainer has used a gimmick during a battle.
 bool32 HasTrainerUsedGimmick(enum BattlerId battler, enum Gimmick gimmick)
 {
+    // In Mega Randomizer Mode each party member gets its own Mega activation.
+    // The active Mega is already blocked separately by CanMegaEvolve.
+    if (gimmick == GIMMICK_MEGA && IsMegaRandomizerModeEnabled())
+        return FALSE;
+
     if (IsDoubleBattle() && (IsPartnerMonFromSameTrainer(battler) || (gimmick == GIMMICK_DYNAMAX)))
     {
         enum BattlerId partner = BATTLE_PARTNER(battler);

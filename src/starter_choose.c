@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "bg.h"
 #include "challenge_menu.h"
 #include "data.h"
@@ -444,6 +445,15 @@ u16 GetStarterPokemon(u16 chosenStarterId)
 {
     if (chosenStarterId >= STARTER_MON_COUNT)
         chosenStarterId = 0;
+
+    // Keep the common starter API in sync with Elm's lab script hook.
+    // Outside Mega Mode, original starter/One Type behavior is preserved.
+    if (IsMegaRandomizerModeEnabled())
+    {
+        u16 megaStarter = MegaMode_GetStarterSpecies(chosenStarterId);
+        if (megaStarter != SPECIES_NONE)
+            return megaStarter;
+    }
 
     if (IsOneTypeChallengeActive())
     {

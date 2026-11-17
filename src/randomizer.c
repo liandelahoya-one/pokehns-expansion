@@ -1,4 +1,5 @@
 #include "randomizer.h"
+#include "mega_mode.h"
 
 #if RANDOMIZER_AVAILABLE
 #include "main.h"
@@ -344,7 +345,10 @@ static bool32 IsSpeciesValidForRandomizer(u16 species)
 // randomizer can roll has to pass this, so the gen scope applies here.
 static bool32 IsSpeciesPermitted(u16 species)
 {
-    return IsSpeciesValidForRandomizer(species) && IsSpeciesInGenScope(species);
+    return IsSpeciesValidForRandomizer(species)
+        && !gSpeciesInfo[species].isMegaEvolution
+        && !gSpeciesInfo[species].isPrimalReversion
+        && IsSpeciesInGenScope(species);
 };
 
 u32 GenerateSeedForRandomizer(void)
@@ -381,7 +385,10 @@ struct Sfc32State RandomizerRandSeed(enum RandomizerReason reason, u32 data1, u3
     struct Sfc32State state;
     u32 i;
 
-    if (IsChaosMode() && reason != RANDOMIZER_REASON_ABILITIES)
+    // The Mega encounter-slot rolls must remain fixed for a route even in
+    // Chaos Mode; the ordinary wild species randomizer can still vary.
+    if (IsChaosMode() && reason != RANDOMIZER_REASON_ABILITIES
+        && reason != RANDOMIZER_REASON_MEGA_WILD_ENCOUNTER)
     {
         state.a = Random32();
         state.b = Random32();
@@ -953,17 +960,35 @@ u16 RandomizeMonBaseForm(enum RandomizerReason reason, enum RandomizerSpeciesMod
 
 static u16 ChooseRandomForm(struct Sfc32State *state, const u16 baseSpecies)
 {
-    const u16 *formsTable = gSpeciesInfo[baseSpecies].formSpeciesIdTable;
-    if (formsTable)
-    {
-        u32 formCount = 0;
-        while (formsTable[formCount] != FORM_SPECIES_END)
-        {
-            formCount++;
-        }
-        return formsTable[RandomizerNextRange(state, formCount)];
-    }
+    const u16 *forms = gSpeciesInfo[baseSpecies].formSpeciesIdTable;
+    u32 validCount = 0;
+    if (forms == NULL)
+        return baseSpecies;
 
+    // Exclude battle-only forms such as Mega Zeraora before choosing.
+    for (u32 i = 0; forms[i] != FORM_SPECIES_END; i++)
+    {
+        u16 form = forms[i];
+        if (form > SPECIES_NONE && form < NUM_SPECIES && IsSpeciesEnabled(form)
+         && !gSpeciesInfo[form].isMegaEvolution
+         && !gSpeciesInfo[form].isPrimalReversion)
+            validCount++;
+    }
+    if (validCount == 0)
+        return baseSpecies;
+
+    u32 chosen = RandomizerNextRange(state, validCount);
+    for (u32 i = 0; forms[i] != FORM_SPECIES_END; i++)
+    {
+        u16 form = forms[i];
+        if (form > SPECIES_NONE && form < NUM_SPECIES && IsSpeciesEnabled(form)
+         && !gSpeciesInfo[form].isMegaEvolution
+         && !gSpeciesInfo[form].isPrimalReversion)
+        {
+            if (chosen-- == 0)
+                return form;
+        }
+    }
     return baseSpecies;
 }
 
@@ -1021,13 +1046,56 @@ u16 RandomizeMon(enum RandomizerReason reason, enum RandomizerSpeciesMode mode, 
     switch (speciesMode)
     {
         case MON_RANDOMIZER_RANDOM_FORM:
-            return ChooseRandomForm(&state, resultSpecies);
+            resultSpecies = ChooseRandomForm(&state, resultSpecies);
+            break;
         case MON_RANDOMIZER_SPECIAL_FORM:
-            return ChooseFormSpecial(&state, resultSpecies);
+            resultSpecies = ChooseFormSpecial(&state, resultSpecies);
+            break;
         case MON_RANDOMIZER_NORMAL:
         default:
-            return resultSpecies;
+            break;
     }
+    return MegaMode_NormalizeBattleForm(resultSpecies);
+}
+
+// Each map/encounter-table slot gets a persistent 25% Mega-capable roll.
+// This chooses species that can Mega Evolve directly with a held stone;
+// pre-evolutions and actual Mega forms are excluded. We keep the map and
+// slot fixed even if MAP SEEDED is off, avoiding per-battle slot changes.
+static u16 RandomizeMegaModeWildSlot(u16 originalSpecies, u8 mapNum, u8 mapGroup,
+                                     enum WildPokemonArea area, u8 slot)
+{
+    const u32 slotId = ((u32)mapGroup << 24) | ((u32)mapNum << 16)
+                     | ((u32)area << 8) | slot;
+    struct Sfc32State rng = RandomizerRandSeed(RANDOMIZER_REASON_MEGA_WILD_ENCOUNTER,
+                                               slotId, originalSpecies);
+    u16 chosen = SPECIES_NONE;
+    u32 candidates = 0;
+
+    // The first roll selects roughly one of every four available slots.
+    if (RandomizerNextRange(&rng, 4) != 0)
+        return SPECIES_NONE;
+
+    // Reservoir sampling produces an unbiased pick from the legal pool.
+    for (u32 candidate = 1; candidate < NUM_SPECIES; candidate++)
+    {
+        if (!IsSpeciesPermitted(candidate)
+         || gSpeciesInfo[candidate].isMegaEvolution
+         || gSpeciesInfo[candidate].isPrimalReversion
+         || MegaMode_GetStoneForSpecies(candidate, TYPE_NONE) == ITEM_NONE)
+            continue;
+
+        if (!gSaveBlock3Ptr->challengeSettings.tx_Random_IncludeLegendaries
+         && (gSpeciesInfo[candidate].isRestrictedLegendary
+          || gSpeciesInfo[candidate].isSubLegendary
+          || gSpeciesInfo[candidate].isMythical))
+            continue;
+
+        candidates++;
+        if (RandomizerNextRange(&rng, candidates) == 0)
+            chosen = candidate;
+    }
+    return chosen;
 }
 
 u16 RandomizeWildEncounter(u16 species, u8 mapNum, u8 mapGroup, enum WildPokemonArea area, u8 slot)
@@ -1039,6 +1107,13 @@ u16 RandomizeWildEncounter(u16 species, u8 mapNum, u8 mapGroup, enum WildPokemon
             seed = GetRandomizerSeed() ^ (mapGroup << 24 | mapNum << 16 | area << 8 | slot);
         else
             seed = Random32();
+        if (IsMegaRandomizerModeEnabled())
+        {
+            u16 megaSpecies = RandomizeMegaModeWildSlot(species, mapNum, mapGroup, area, slot);
+            if (megaSpecies != SPECIES_NONE)
+                return megaSpecies;
+        }
+
         return RandomizeMon(RANDOMIZER_REASON_WILD_ENCOUNTER, GetRandomizerOption(RANDOMIZER_OPTION_SPECIES_MODE), seed, species);
     }
 

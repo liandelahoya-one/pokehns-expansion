@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "malloc.h"
 #include "apprentice.h"
 #include "battle.h"
@@ -82,7 +83,9 @@ extern u16 gSpecialVar_ItemId;
 
 #define FRIENDSHIP_EVO_THRESHOLD ((P_FRIENDSHIP_EVO_THRESHOLD >= GEN_8) ? 160 : 220)
 
-static const u32 sShinyOddsTable[] = { 8, 16, 32, 64, 128 };
+// These are thresholds out of 65536, corresponding to 1/8192 through 1/16.
+// Alternate shiny palettes are controlled independently and remain enabled.
+static const u32 sShinyOddsTable[] = { 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
 
 u32 GetShinyOdds(void)
 {
@@ -5553,6 +5556,14 @@ static const struct {
 enum Ability GetAbilityBySpecies(u16 species, u8 abilityNum)
 {
     int i;
+    u16 abilitySpecies = species;
+
+    // A Mega form retains the same ability roll as its pre-Mega form.
+    // Resolve the stored ability slot against the base form during Mega Mode,
+    // including when the battler's party data is rebuilt after switching.
+    if (IsMegaRandomizerModeEnabled()
+     && species < NUM_SPECIES && gSpeciesInfo[species].isMegaEvolution)
+        abilitySpecies = GET_BASE_SPECIES_ID(species);
 
 #if RANDOMIZER_AVAILABLE == TRUE
     if (abilityNum == 0 && gSaveBlock3Ptr->challengeSettings.tx_Mode_Legendary_Abilities == 1 && !RandomizerFeatureEnabled(RANDOMIZE_ABILITIES))
@@ -5571,7 +5582,7 @@ enum Ability GetAbilityBySpecies(u16 species, u8 abilityNum)
     }
 
     if (abilityNum < NUM_ABILITY_SLOTS)
-        gLastUsedAbility = GetSpeciesAbility(species, abilityNum);
+        gLastUsedAbility = GetSpeciesAbility(abilitySpecies, abilityNum);
     else
         gLastUsedAbility = ABILITY_NONE;
 
@@ -5579,18 +5590,18 @@ enum Ability GetAbilityBySpecies(u16 species, u8 abilityNum)
     {
         for (i = NUM_NORMAL_ABILITY_SLOTS; i < NUM_ABILITY_SLOTS && gLastUsedAbility == ABILITY_NONE; i++)
         {
-            gLastUsedAbility = GetSpeciesAbility(species, i);
+            gLastUsedAbility = GetSpeciesAbility(abilitySpecies, i);
         }
     }
 
     for (i = 0; i < NUM_ABILITY_SLOTS && gLastUsedAbility == ABILITY_NONE; i++) // look for any non-empty ability
     {
-        gLastUsedAbility = GetSpeciesAbility(species, i);
+        gLastUsedAbility = GetSpeciesAbility(abilitySpecies, i);
     }
 
     #if RANDOMIZER_AVAILABLE == TRUE
     if (gLastUsedAbility != ABILITY_NONE)
-        gLastUsedAbility = RandomizeAbility(species, abilityNum, gLastUsedAbility);
+        gLastUsedAbility = RandomizeAbility(abilitySpecies, abilityNum, gLastUsedAbility);
     #endif
 
     return gLastUsedAbility;
@@ -9757,6 +9768,7 @@ u32 GiveScriptedMonToPlayer(struct Pokemon *mon, u8 slot)
     {
         HandleSetPokedexFlagFromMon(mon, FLAG_SET_SEEN);
         HandleSetPokedexFlagFromMon(mon, FLAG_SET_CAUGHT);
+        MegaMode_GrantStonesForSpecies(GetMonData(mon, MON_DATA_SPECIES));
     }
     return sentToPc;
 }

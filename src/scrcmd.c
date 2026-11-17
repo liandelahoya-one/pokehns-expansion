@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "frontier_util.h"
 #include "battle_setup.h"
 #include "battle_util.h"
@@ -2713,20 +2714,37 @@ bool8 ScrCmd_showmonpic(struct ScriptContext *ctx)
             DebugPrintfLevel(MGBA_LOG_DEBUG, "******** Preview Should be Shiny: %d ********", shinyStarter);
         #endif
 
-        #if RANDOMIZER_AVAILABLE
-        if (RandomizerFeatureEnabled(RANDOMIZE_STARTER_AND_GIFT_MON))
+        // Elm's laboratory stores the chosen preview in VAR_TEMP_2. In Mega
+        // Mode the starter generator already provides a legal Mega-capable
+        // species; a second normal randomizer roll here would overwrite it.
+        // Use the exact same choice for the picture, dialogue and givemon.
+        if (IsMegaRandomizerModeEnabled()
+         && varId == VAR_TEMP_2 && starter < 3)
         {
-            species = RandomizeMon(RANDOMIZER_REASON_STARTER_AND_GIFT_MON, GetRandomizerOption(RANDOMIZER_OPTION_SPECIES_MODE), GetRandomizerSeed() ^ species, species);
-            if (varId >= VARS_START)
+            u16 megaStarter = MegaMode_GetStarterSpecies(starter);
+            if (megaStarter != SPECIES_NONE)
+            {
+                species = megaStarter;
                 VarSet(varId, species);
+            }
         }
-        #endif
-
-        if (IsOneTypeChallengeActive())
+        else
         {
-            species = GetStarterPokemon(VarGet(VAR_STARTER_MON));
-            if (varId >= VARS_START)
-                VarSet(varId, species);
+            #if RANDOMIZER_AVAILABLE
+            if (RandomizerFeatureEnabled(RANDOMIZE_STARTER_AND_GIFT_MON))
+            {
+                species = RandomizeMon(RANDOMIZER_REASON_STARTER_AND_GIFT_MON, GetRandomizerOption(RANDOMIZER_OPTION_SPECIES_MODE), GetRandomizerSeed() ^ species, species);
+                if (varId >= VARS_START)
+                    VarSet(varId, species);
+            }
+            #endif
+
+            if (IsOneTypeChallengeActive())
+            {
+                species = GetStarterPokemon(VarGet(VAR_STARTER_MON));
+                if (varId >= VARS_START)
+                    VarSet(varId, species);
+            }
         }
     }
 

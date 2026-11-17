@@ -238,7 +238,21 @@ static u64 GetAiFlags(u16 trainerId, enum BattlerId battler)
         else if (IsSpecialTrainer(trainerId))
             flags = 0; // Link/Union Room/Secret Base opponents have no entry in gTrainers.
         else
+        {
             flags = GetTrainerAIFlagsFromId(trainerId);
+#if IS_HNS
+            // Mega Madness: ordinary trainers use the competent battle AI too.
+            // Battle-only behavior; the saved Pokemon and flags are unchanged.
+            if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
+            {
+                flags |= AI_FLAG_BASIC_TRAINER | AI_FLAG_TRY_TO_2HKO
+                       | AI_FLAG_HP_AWARE | AI_FLAG_SMART_TERA
+                       | AI_FLAG_PP_STALL_PREVENTION;
+                if (!(flags & AI_FLAG_SEQUENCE_SWITCHING))
+                    flags |= AI_FLAG_SMART_SWITCHING;
+            }
+#endif
+        }
     }
 
     if (IsDoubleBattle() && flags != 0)
@@ -624,7 +638,9 @@ void RecordMovesBasedOnStab(enum BattlerId battler)
     for (u32 moveIndex = 0; moveIndex < MAX_MON_MOVES; moveIndex++)
     {
         enum Move playerMove = gBattleMons[battler].moves[moveIndex];
-        if (IsSpeciesOfType(gBattleMons[battler].species, GetMoveType(playerMove)) && GetMovePower(playerMove != 0))
+        if (playerMove != MOVE_NONE
+         && IsSpeciesOfType(gBattleMons[battler].species, GetMoveType(playerMove))
+         && GetMovePower(playerMove) != 0)
             RecordKnownMove(battler, playerMove);
     }
 }
@@ -3156,6 +3172,7 @@ static s32 AI_TryToFaint(enum BattlerId battlerAtk, enum BattlerId battlerDef, e
     u32 movesetIndex = gAiThinkingStruct->movesetIndex;
     enum Move predictedMoveSpeedCheck = GetIncomingMoveSpeedCheck(battlerAtk, battlerDef, gAiLogicData);
     bool32 aiIsFaster = AI_IsFaster(battlerAtk, battlerDef, move, predictedMoveSpeedCheck, CONSIDER_PRIORITY);
+    u32 accuracy = gAiLogicData->moveAccuracy[battlerAtk][battlerDef][movesetIndex];
 
     if (IsTargetingPartner(battlerAtk, battlerDef))
         return score;
@@ -3166,10 +3183,21 @@ static s32 AI_TryToFaint(enum BattlerId battlerAtk, enum BattlerId battlerDef, e
     if (CanIndexMoveFaintTarget(battlerAtk, battlerDef, movesetIndex, AI_ATTACKING)
         && (!IsSelfSacrificeEffect(move) || ShouldConsiderSelfSacrificeDamageEffect(battlerAtk, battlerDef, move, aiIsFaster)))
     {
-        if (aiIsFaster)
-            ADJUST_SCORE(FAST_KILL);
-        else
-            ADJUST_SCORE(SLOW_KILL);
+        // Value a reliable KO over a low-accuracy OHKO gambit.
+        // Explicitly risky AI retains its all-in scoring.
+        s32 koBonus = aiIsFaster ? FAST_KILL : SLOW_KILL;
+        if (!(gAiThinkingStruct->aiFlags[battlerAtk] & AI_FLAG_RISKY))
+        {
+            if (accuracy < 50)
+                koBonus = 1;
+            else if (accuracy < 70)
+                koBonus = 2;
+            else if (accuracy < 85)
+                koBonus = (koBonus > 2) ? koBonus - 2 : 1;
+            else if (accuracy < 95)
+                koBonus--;
+        }
+        ADJUST_SCORE(koBonus);
     }
     else if (CanTargetFaintAi(battlerDef, battlerAtk)
             && AI_GetWhichBattlerFasterOrTies(battlerAtk, battlerDef, TRUE) != AI_IS_FASTER
@@ -6874,7 +6902,8 @@ bool32 DoesSideHaveDamagingHazards(enum BattleSide side)
         case HAZARDS_STEELSURGE:
             return TRUE;
         default:
-            return FALSE;
+            // An empty first slot must not hide hazards in later slots.
+            break;
         }
     }
     return FALSE;
