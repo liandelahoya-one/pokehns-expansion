@@ -152,6 +152,67 @@ enum Type MegaMode_GetTrainerTheme(u16 trainerId)
     case TRAINER_BLAINE_HNS:
     case TRAINER_BLAINE_POSTOBC_HNS: return TYPE_FIRE;
     case TRAINER_GIOVANNI_HNS: return TYPE_GROUND;
+    // Gym trainers are keyed from the actual Johto/Kanto gym map scripts.
+    case TRAINER_ROD_HNS:
+    case TRAINER_ABE_HNS:
+        return TYPE_FLYING;
+    case TRAINER_AL_HNS:
+    case TRAINER_JOSH_HNS:
+    case TRAINER_BENNY_HNS:
+    case TRAINER_AMY_AND_MAY_HNS:
+        return TYPE_BUG;
+    case TRAINER_CARRIE_HNS:
+    case TRAINER_BRIDGET_HNS:
+    case TRAINER_VICTORIA_HNS:
+    case TRAINER_SAMANTHA_HNS:
+        return TYPE_NORMAL;
+    case TRAINER_JEFFREY_HNS:
+    case TRAINER_PING_HNS:
+    case TRAINER_MARTHA_HNS:
+    case TRAINER_GRACE_HNS:
+        return TYPE_GHOST;
+    case TRAINER_YOSHI_HNS:
+    case TRAINER_LAO_HNS:
+    case TRAINER_NOB_HNS:
+    case TRAINER_LUNG_HNS:
+        return TYPE_FIGHTING;
+    case TRAINER_RONALD_HNS:
+    case TRAINER_BRAD_HNS:
+    case TRAINER_DOUGLAS_HNS:
+    case TRAINER_ROXANNE_HNS:
+    case TRAINER_CLARISSA_HNS:
+        return TYPE_ICE;
+    case TRAINER_CODY_HNS:
+    case TRAINER_FRAN_HNS:
+    case TRAINER_PAUL_HNS:
+    case TRAINER_MIKE_HNS:
+    case TRAINER_LOLA_HNS:
+        return TYPE_DRAGON;
+    case TRAINER_JERRY_HNS:
+        return TYPE_ROCK;
+    case TRAINER_DIANA_HNS:
+    case TRAINER_BRIANA_HNS:
+    case TRAINER_PARKER_HNS:
+        return TYPE_WATER;
+    case TRAINER_GREGORY_HNS:
+    case TRAINER_VINCENT_HNS:
+    case TRAINER_HORTON_HNS:
+        return TYPE_ELECTRIC;
+    case TRAINER_MICHELLE_HNS:
+    case TRAINER_TANYA_HNS:
+    case TRAINER_JULIA_HNS:
+    case TRAINER_JO_AND_ZOE_HNS:
+        return TYPE_GRASS;
+    case TRAINER_REBECCA_HNS:
+    case TRAINER_FRANKLIN_HNS:
+    case TRAINER_DORIS_HNS:
+    case TRAINER_JARED_HNS:
+        return TYPE_PSYCHIC;
+    case TRAINER_ALICE_HNS:
+    case TRAINER_LINDA_HNS:
+    case TRAINER_CINDY_HNS:
+    case TRAINER_BARRY_HNS:
+        return TYPE_POISON;
     default: return TYPE_NONE; // Blue is deliberately a mixed-type leader.
     }
 }
@@ -231,6 +292,58 @@ u8 MegaMode_GetTrainerMegaCount(u16 trainerId, u8 partySize)
     case TRAINER_KAREN_POSTOBC_HNS:
     case TRAINER_LANCE_POSTOBC_HNS:
         count = partySize; break;
+    // Progressive minimum Mega counts for each gym's actual trainers.
+    case TRAINER_ROD_HNS:
+    case TRAINER_ABE_HNS:
+    case TRAINER_AL_HNS:
+    case TRAINER_JOSH_HNS:
+    case TRAINER_BENNY_HNS:
+    case TRAINER_AMY_AND_MAY_HNS:
+    case TRAINER_CARRIE_HNS:
+    case TRAINER_BRIDGET_HNS:
+    case TRAINER_VICTORIA_HNS:
+    case TRAINER_SAMANTHA_HNS:
+    case TRAINER_JEFFREY_HNS:
+    case TRAINER_PING_HNS:
+    case TRAINER_MARTHA_HNS:
+    case TRAINER_GRACE_HNS:
+        count = 1; break;
+    case TRAINER_YOSHI_HNS:
+    case TRAINER_LAO_HNS:
+    case TRAINER_NOB_HNS:
+    case TRAINER_LUNG_HNS:
+        count = 2; break;
+    case TRAINER_RONALD_HNS:
+    case TRAINER_BRAD_HNS:
+    case TRAINER_DOUGLAS_HNS:
+    case TRAINER_ROXANNE_HNS:
+    case TRAINER_CLARISSA_HNS:
+        count = 3; break;
+    case TRAINER_CODY_HNS:
+    case TRAINER_FRAN_HNS:
+    case TRAINER_PAUL_HNS:
+    case TRAINER_MIKE_HNS:
+    case TRAINER_LOLA_HNS:
+    case TRAINER_JERRY_HNS:
+    case TRAINER_DIANA_HNS:
+    case TRAINER_BRIANA_HNS:
+    case TRAINER_PARKER_HNS:
+    case TRAINER_GREGORY_HNS:
+    case TRAINER_VINCENT_HNS:
+    case TRAINER_HORTON_HNS:
+    case TRAINER_MICHELLE_HNS:
+    case TRAINER_TANYA_HNS:
+    case TRAINER_JULIA_HNS:
+    case TRAINER_JO_AND_ZOE_HNS:
+    case TRAINER_REBECCA_HNS:
+    case TRAINER_FRANKLIN_HNS:
+    case TRAINER_DORIS_HNS:
+    case TRAINER_JARED_HNS:
+    case TRAINER_ALICE_HNS:
+    case TRAINER_LINDA_HNS:
+    case TRAINER_CINDY_HNS:
+    case TRAINER_BARRY_HNS:
+        count = 4; break;
     default:
         count = 0; break;
     }
