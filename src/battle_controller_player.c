@@ -904,8 +904,13 @@ void HandleInputChooseMove(enum BattlerId battler)
             MoveSelectionDisplayMoveType(battler);
         }
     }
-    else if (JOY_NEW(B_MOVE_DESCRIPTION_BUTTON) &&
-        !(B_MOVE_DESCRIPTION_BUTTON == L_BUTTON && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A))
+    // START normally opens move info, but a Mega-capable battler needs
+    // that same button to select Mega Evolution. Keep the move info button
+    // working when no Mega is currently available.
+    else if (JOY_NEW(B_MOVE_DESCRIPTION_BUTTON)
+        && !(B_MOVE_DESCRIPTION_BUTTON == START_BUTTON
+          && gBattleStruct->gimmick.usableGimmick[battler] == GIMMICK_MEGA)
+        && !(B_MOVE_DESCRIPTION_BUTTON == L_BUTTON && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A))
     {
         gBattleStruct->descriptionSubmenu = TRUE;
         TryMoveSelectionDisplayMoveDescription(battler);
