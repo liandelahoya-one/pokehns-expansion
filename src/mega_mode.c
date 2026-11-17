@@ -50,6 +50,32 @@ enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType)
     return ITEM_NONE;
 }
 
+// Check all legal Mega stones for a species, not just the first form
+// in its table. Boss AI must recognize X/Y and original/Z variants.
+bool32 MegaMode_SpeciesHasStone(u16 species, enum Item stone)
+{
+    const struct FormChange *changes;
+
+    if (stone == ITEM_NONE || species <= SPECIES_NONE
+     || species >= NUM_SPECIES || !IsSpeciesEnabled(species))
+        return FALSE;
+
+    changes = GetSpeciesFormChanges(species);
+    if (changes == NULL)
+        return FALSE;
+
+    for (u32 i = 0; changes[i].method != FORM_CHANGE_TERMINATOR; i++)
+    {
+        if (changes[i].method == FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
+         && changes[i].param1 == stone
+         && changes[i].targetSpecies < NUM_SPECIES
+         && IsSpeciesEnabled(changes[i].targetSpecies)
+         && gSpeciesInfo[changes[i].targetSpecies].isMegaEvolution)
+            return TRUE;
+    }
+    return FALSE;
+}
+
 void MegaMode_GrantStonesForSpecies(u16 species)
 {
     const struct FormChange *changes;
