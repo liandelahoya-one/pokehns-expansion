@@ -904,13 +904,20 @@ void HandleInputChooseMove(enum BattlerId battler)
             MoveSelectionDisplayMoveType(battler);
         }
     }
-    // START normally opens move info, but a Mega-capable battler needs
-    // that same button to select Mega Evolution. Keep the move info button
-    // working when no Mega is currently available.
+    // The active battler's Mega action takes priority over the move-info
+    // shortcut, even when both commands are assigned to START.
+    else if (JOY_NEW(START_BUTTON)
+         && gBattleStruct->gimmick.usableGimmick[battler] == GIMMICK_MEGA
+         && !HasTrainerUsedGimmick(battler, GIMMICK_MEGA))
+    {
+        gBattleStruct->gimmick.playerSelect ^= 1;
+        ReloadMoveNames(battler);
+        ChangeGimmickTriggerSprite(gBattleStruct->gimmick.triggerSpriteId, gBattleStruct->gimmick.playerSelect);
+        PlaySE(SE_SELECT);
+    }
+    // Without an available Mega, START still opens the original move info.
     else if (JOY_NEW(B_MOVE_DESCRIPTION_BUTTON)
-        && !(B_MOVE_DESCRIPTION_BUTTON == START_BUTTON
-          && gBattleStruct->gimmick.usableGimmick[battler] == GIMMICK_MEGA)
-        && !(B_MOVE_DESCRIPTION_BUTTON == L_BUTTON && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A))
+         && !(B_MOVE_DESCRIPTION_BUTTON == L_BUTTON && gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A))
     {
         gBattleStruct->descriptionSubmenu = TRUE;
         TryMoveSelectionDisplayMoveDescription(battler);
