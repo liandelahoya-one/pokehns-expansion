@@ -19,7 +19,9 @@ enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType)
 {
     const struct FormChange *changes;
 
-    if (species <= SPECIES_NONE || species >= NUM_SPECIES)
+    // GetSpeciesFormChanges sanitizes its input and intentionally crashes on
+    // disabled entries. The species IDs are sparse, even below NUM_SPECIES.
+    if (species <= SPECIES_NONE || species >= NUM_SPECIES || !IsSpeciesEnabled(species))
         return ITEM_NONE;
 
     changes = GetSpeciesFormChanges(species);
@@ -32,6 +34,7 @@ enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType)
 
         if (change->method != FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
          || change->targetSpecies >= NUM_SPECIES
+         || !IsSpeciesEnabled(change->targetSpecies)
          || !gSpeciesInfo[change->targetSpecies].isMegaEvolution
          || change->param1 == ITEM_NONE)
             continue;
@@ -50,7 +53,8 @@ void MegaMode_GrantStonesForSpecies(u16 species)
 {
     const struct FormChange *changes;
 
-    if (!IsMegaRandomizerModeEnabled() || species <= SPECIES_NONE || species >= NUM_SPECIES)
+    if (!IsMegaRandomizerModeEnabled() || species <= SPECIES_NONE
+     || species >= NUM_SPECIES || !IsSpeciesEnabled(species))
         return;
 
     changes = GetSpeciesFormChanges(species);
@@ -63,6 +67,7 @@ void MegaMode_GrantStonesForSpecies(u16 species)
         enum Item stone = changes[i].param1;
         if (changes[i].method != FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
          || changes[i].targetSpecies >= NUM_SPECIES
+         || !IsSpeciesEnabled(changes[i].targetSpecies)
          || !gSpeciesInfo[changes[i].targetSpecies].isMegaEvolution
          || stone == ITEM_NONE)
             continue;
@@ -410,7 +415,9 @@ u16 MegaMode_SelectThemedSpecies(enum Type theme, u16 trainerId, u8 slot, struct
 #endif
         for (u32 species = 1; species < NUM_SPECIES; species++)
         {
-            if (gSpeciesInfo[species].isMegaEvolution
+            // Avoid even attempting form-table lookups for disabled IDs.
+            if (!IsSpeciesEnabled(species)
+             || gSpeciesInfo[species].isMegaEvolution
              || MegaMode_GetStoneForSpecies(species, theme) == ITEM_NONE
              || (!allowDuplicate && MegaMode_PreviouslyUsedSpecies(species, party, previousCount)))
                 continue;
@@ -446,6 +453,7 @@ u16 MegaMode_RerollOffThemeMega(u16 species, enum Type theme, u16 trainerId, u8 
                                       ((u32)trainerId << 16) | ((u32)slot << 8) | attempt,
                                       species);
         if (replacement > SPECIES_NONE && replacement < NUM_SPECIES
+         && IsSpeciesEnabled(replacement)
          && (MegaMode_GetStoneForSpecies(replacement, TYPE_NONE) == ITEM_NONE
           || MegaMode_GetStoneForSpecies(replacement, theme) != ITEM_NONE))
             return replacement;
@@ -453,7 +461,8 @@ u16 MegaMode_RerollOffThemeMega(u16 species, enum Type theme, u16 trainerId, u8 
 #endif
     // Deterministic safe fallback; avoids an endless loop on restricted pools.
     for (u32 candidate = 1; candidate < NUM_SPECIES; candidate++)
-        if (!gSpeciesInfo[candidate].isMegaEvolution
+        if (IsSpeciesEnabled(candidate)
+         && !gSpeciesInfo[candidate].isMegaEvolution
          && MegaMode_GetStoneForSpecies(candidate, TYPE_NONE) == ITEM_NONE)
             return candidate;
 
