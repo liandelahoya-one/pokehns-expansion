@@ -2085,6 +2085,8 @@ u8 CreateNPCTrainerPartyFromTrainer(struct Pokemon *party, const struct Trainer 
                     else if (forcedMegas > 0)
                         species = MegaMode_RerollOffThemeMega(species, theme, sMegaModeCreatingTrainerId, i);
                 }
+                // A trainer may only acquire these forms by transforming in battle.
+                species = MegaMode_NormalizeBattleForm(species);
                 CreateMon(&party[i], species, partyData[monIndex].lvl, personalityValue, otId);
             }
             SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[monIndex].heldItem);

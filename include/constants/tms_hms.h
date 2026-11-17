@@ -95,7 +95,9 @@
     F(U_TURN) \
     F(SUBSTITUTE) \
     F(FLASH_CANNON) \
-    F(TRICK_ROOM)
+    F(TRICK_ROOM) \
+    F(DRAGON_DANCE) \
+    F(DRACO_METEOR)
 
 #define FOREACH_HM(F) \
     F(CUT) \

@@ -8,9 +8,12 @@
 // mechanics are left unchanged when this option is off.
 bool32 IsMegaRandomizerModeEnabled(void);
 
-// Consult actual form-change tables, not a hard-coded list of stones.
+// Convert a direct Mega/Primal species into its battle-ready base form.
+u16 MegaMode_NormalizeBattleForm(u16 species);
+
+// Consult form-change tables for Mega Stones and Primal Orbs.
 enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType);
-// Unlike the getter, this recognizes both X/Y or original/Z Mega Stones.
+// Recognizes split Mega Stones and both Primal Orbs.
 bool32 MegaMode_SpeciesHasStone(u16 species, enum Item stone);
 void MegaMode_GrantStonesForSpecies(u16 species);
 

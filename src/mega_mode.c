@@ -16,6 +16,28 @@ bool32 IsMegaRandomizerModeEnabled(void)
     return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->challengeSettings.tx_Random_MegaMode;
 }
 
+// Battle-only Mega and Primal forms are never directly spawned.
+u16 MegaMode_NormalizeBattleForm(u16 species)
+{
+    if (species > SPECIES_NONE && species < NUM_SPECIES
+     && IsSpeciesEnabled(species)
+     && (gSpeciesInfo[species].isMegaEvolution || gSpeciesInfo[species].isPrimalReversion))
+        return GET_BASE_SPECIES_ID(species);
+    return species;
+}
+
+// Mega Stones and Red/Blue Orbs all use item-triggered form changes.
+static bool32 MegaMode_IsHeldItemTransformation(const struct FormChange *change)
+{
+    if (change->targetSpecies >= NUM_SPECIES || change->param1 == ITEM_NONE
+     || !IsSpeciesEnabled(change->targetSpecies))
+        return FALSE;
+    return (change->method == FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
+         && gSpeciesInfo[change->targetSpecies].isMegaEvolution)
+        || (change->method == FORM_CHANGE_BATTLE_PRIMAL_REVERSION
+         && gSpeciesInfo[change->targetSpecies].isPrimalReversion);
+}
+
 enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType)
 {
     const struct FormChange *changes;
@@ -33,11 +55,7 @@ enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType)
     {
         const struct FormChange *change = &changes[i];
 
-        if (change->method != FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
-         || change->targetSpecies >= NUM_SPECIES
-         || !IsSpeciesEnabled(change->targetSpecies)
-         || !gSpeciesInfo[change->targetSpecies].isMegaEvolution
-         || change->param1 == ITEM_NONE)
+        if (!MegaMode_IsHeldItemTransformation(change))
             continue;
 
         if (requiredMegaType != TYPE_NONE
@@ -66,11 +84,7 @@ bool32 MegaMode_SpeciesHasStone(u16 species, enum Item stone)
 
     for (u32 i = 0; changes[i].method != FORM_CHANGE_TERMINATOR; i++)
     {
-        if (changes[i].method == FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
-         && changes[i].param1 == stone
-         && changes[i].targetSpecies < NUM_SPECIES
-         && IsSpeciesEnabled(changes[i].targetSpecies)
-         && gSpeciesInfo[changes[i].targetSpecies].isMegaEvolution)
+        if (changes[i].param1 == stone && MegaMode_IsHeldItemTransformation(&changes[i]))
             return TRUE;
     }
     return FALSE;
@@ -88,15 +102,11 @@ void MegaMode_GrantStonesForSpecies(u16 species)
     if (changes == NULL)
         return;
 
-    // Multi-Mega Pokemon (e.g. Charizard) can require two distinct stones.
+    // Grant every split Mega Stone, or Groudon/Kyogre's Primal Orb.
     for (u32 i = 0; changes[i].method != FORM_CHANGE_TERMINATOR; i++)
     {
         enum Item stone = changes[i].param1;
-        if (changes[i].method != FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
-         || changes[i].targetSpecies >= NUM_SPECIES
-         || !IsSpeciesEnabled(changes[i].targetSpecies)
-         || !gSpeciesInfo[changes[i].targetSpecies].isMegaEvolution
-         || stone == ITEM_NONE)
+        if (!MegaMode_IsHeldItemTransformation(&changes[i]))
             continue;
 
         if (CheckBagHasItem(stone, 1) || CheckPCHasItem(stone, 1))
@@ -152,6 +162,7 @@ u16 MegaMode_GetStarterSpecies(u8 slot)
         {
             if (!IsSpeciesEnabled(species)
              || gSpeciesInfo[species].isMegaEvolution
+             || gSpeciesInfo[species].isPrimalReversion
              || MegaMode_GetStoneForSpecies(species, TYPE_NONE) == ITEM_NONE)
                 continue;
 #if RANDOMIZER_AVAILABLE
@@ -541,6 +552,7 @@ u16 MegaMode_SelectThemedSpecies(enum Type theme, u16 trainerId, u8 slot, struct
             // Avoid even attempting form-table lookups for disabled IDs.
             if (!IsSpeciesEnabled(species)
              || gSpeciesInfo[species].isMegaEvolution
+             || gSpeciesInfo[species].isPrimalReversion
              || MegaMode_GetStoneForSpecies(species, theme) == ITEM_NONE
              || (!allowDuplicate && MegaMode_PreviouslyUsedSpecies(species, party, previousCount)))
                 continue;
@@ -586,6 +598,7 @@ u16 MegaMode_RerollOffThemeMega(u16 species, enum Type theme, u16 trainerId, u8 
     for (u32 candidate = 1; candidate < NUM_SPECIES; candidate++)
         if (IsSpeciesEnabled(candidate)
          && !gSpeciesInfo[candidate].isMegaEvolution
+         && !gSpeciesInfo[candidate].isPrimalReversion
          && MegaMode_GetStoneForSpecies(candidate, TYPE_NONE) == ITEM_NONE)
             return candidate;
 
