@@ -1,6 +1,7 @@
 #include "global.h"
 #include "mega_mode.h"
 #include "item.h"
+#include "event_data.h"
 #include "pokemon.h"
 #include "constants/form_change_types.h"
 #include "constants/items.h"
