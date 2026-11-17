@@ -37,8 +37,8 @@ enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType)
             continue;
 
         if (requiredMegaType != TYPE_NONE
-         && GetSpeciesType(change->targetSpecies, 0) != requiredMegaType
-         && GetSpeciesType(change->targetSpecies, 1) != requiredMegaType)
+         && gSpeciesInfo[change->targetSpecies].types[0] != requiredMegaType
+         && gSpeciesInfo[change->targetSpecies].types[1] != requiredMegaType)
             continue;
 
         return change->param1;
