@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "constants/songs.h"
 #include "bg.h"
 #include "decoration.h"
@@ -369,6 +370,11 @@ void NewGameInitPCItems(void)
 
     if (gSaveBlock3Ptr->challengeSettings.tx_Nuzlocke_RareCandy)
         AddPCItem(ITEM_INFINITE_RARE_CANDIES, 1);
+
+    // The Ring is an optional withdrawal from the starting PC, not a forced
+    // pickup. The preexisting PC items and normal mode are unchanged.
+    if (IsMegaRandomizerModeEnabled())
+        AddPCItem(ITEM_MEGA_RING, 1);
 }
 
 void BedroomPC(void)
