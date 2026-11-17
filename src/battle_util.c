@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_arena.h"
@@ -8639,7 +8640,7 @@ bool32 CanMegaEvolve(enum BattlerId battler)
         return FALSE;
 
     // Check if Trainer has already Mega Evolved.
-    if (HasTrainerUsedGimmick(battler, GIMMICK_MEGA))
+    if (!IsMegaRandomizerModeEnabled() && HasTrainerUsedGimmick(battler, GIMMICK_MEGA))
         return FALSE;
 
     // Check if battler has another gimmick active.
@@ -8848,6 +8849,7 @@ bool32 TryBattleFormChange(enum BattlerId battler, enum FormChanges method, enum
 
     u32 currentSpecies = GetMonData(mon, MON_DATA_SPECIES);
     u32 targetSpecies = GetBattleFormChangeTargetSpecies(battler, method, ability);
+    enum Ability preMegaAbility = gBattleMons[battler].ability;
 
     struct PartyState *battlePartyState = GetBattlerPartyState(battler);
     // If the battle ends, and there's not a specified species to change back to,
@@ -8876,6 +8878,10 @@ bool32 TryBattleFormChange(enum BattlerId battler, enum FormChanges method, enum
         SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
         gBattleMons[battler].species = targetSpecies;
         RecalcBattlerStats(battler, mon, method == FORM_CHANGE_BATTLE_GIGANTAMAX);
+        if (IsMegaRandomizerModeEnabled()
+         && (method == FORM_CHANGE_BATTLE_MEGA_EVOLUTION_ITEM
+          || method == FORM_CHANGE_BATTLE_MEGA_EVOLUTION_MOVE))
+            gBattleMons[battler].ability = preMegaAbility;
         return TRUE;
     }
 
