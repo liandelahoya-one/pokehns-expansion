@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mega_mode.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "challenge_menu.h"
@@ -2001,6 +2002,10 @@ void CustomTrainerPartyAssignMoves(struct Pokemon *mon, const struct TrainerMon 
     }
 }
 
+// Set only while creating an actual opponent's team; public party helpers
+// can still be used by the Battle Frontier and partner scripts unchanged.
+static u16 sMegaModeCreatingTrainerId = TRAINER_NONE;
+
 u8 CreateNPCTrainerPartyFromTrainer(struct Pokemon *party, const struct Trainer *trainer, bool32 firstTrainer, u32 battleTypeFlags)
 {
     u32 personalityValue;
@@ -2062,11 +2067,35 @@ u8 CreateNPCTrainerPartyFromTrainer(struct Pokemon *party, const struct Trainer 
             {
                 u16 species = partyData[monIndex].species;
                 #if RANDOMIZER_AVAILABLE == TRUE
-                species = RandomizeTrainerMon(trainer->trainerClass, i, monsCount, species);
+                // Use this trainer's ID, not the shared class, as the seed.
+                species = RandomizeTrainerMon(sMegaModeCreatingTrainerId != TRAINER_NONE
+                                             ? sMegaModeCreatingTrainerId : trainer->trainerClass,
+                                             i, monsCount, species);
                 #endif
+                if (IsMegaRandomizerModeEnabled() && sMegaModeCreatingTrainerId != TRAINER_NONE)
+                {
+                    enum Type theme = MegaMode_GetTrainerTheme(sMegaModeCreatingTrainerId);
+                    u8 forcedMegas = MegaMode_GetTrainerMegaCount(sMegaModeCreatingTrainerId, monsCount);
+                    if (i < forcedMegas)
+                    {
+                        u16 themedSpecies = MegaMode_SelectThemedSpecies(theme, sMegaModeCreatingTrainerId, i, party, i);
+                        if (themedSpecies != SPECIES_NONE)
+                            species = themedSpecies;
+                    }
+                    else if (forcedMegas > 0)
+                        species = MegaMode_RerollOffThemeMega(species, theme, sMegaModeCreatingTrainerId, i);
+                }
                 CreateMon(&party[i], species, partyData[monIndex].lvl, personalityValue, otId);
             }
             SetMonData(&party[i], MON_DATA_HELD_ITEM, &partyData[monIndex].heldItem);
+            if (IsMegaRandomizerModeEnabled() && sMegaModeCreatingTrainerId != TRAINER_NONE)
+            {
+                enum Item stone = MegaMode_GetStoneForSpecies(GetMonData(&party[i], MON_DATA_SPECIES),
+                    MegaMode_GetTrainerMegaCount(sMegaModeCreatingTrainerId, monsCount) > 0
+                    ? MegaMode_GetTrainerTheme(sMegaModeCreatingTrainerId) : TYPE_NONE);
+                if (stone != ITEM_NONE)
+                    SetMonData(&party[i], MON_DATA_HELD_ITEM, &stone);
+            }
 
             CustomTrainerPartyAssignMoves(&party[i], &partyData[monIndex]);
             SetMonData(&party[i], MON_DATA_IVS, &(partyData[monIndex].iv));
@@ -2193,11 +2222,15 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
         if (tempTrainer.partySize == 0)
             tempTrainer.partySize = origTrainer->partySize;
 
+        sMegaModeCreatingTrainerId = trainerNum;
         retVal = CreateNPCTrainerPartyFromTrainer(party, (const struct Trainer *)(&tempTrainer), firstTrainer, gBattleTypeFlags);
+        sMegaModeCreatingTrainerId = TRAINER_NONE;
     }
     else
     {
+        sMegaModeCreatingTrainerId = trainerNum;
         retVal = CreateNPCTrainerPartyFromTrainer(party, GetTrainerStructFromId(trainerNum), firstTrainer, gBattleTypeFlags);
+        sMegaModeCreatingTrainerId = TRAINER_NONE;
     }
     return retVal;
 }
