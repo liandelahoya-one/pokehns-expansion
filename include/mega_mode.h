@@ -10,6 +10,8 @@ bool32 IsMegaRandomizerModeEnabled(void);
 
 // Consult actual form-change tables, not a hard-coded list of stones.
 enum Item MegaMode_GetStoneForSpecies(u16 species, enum Type requiredMegaType);
+// Unlike the getter, this recognizes both X/Y or original/Z Mega Stones.
+bool32 MegaMode_SpeciesHasStone(u16 species, enum Item stone);
 void MegaMode_GrantStonesForSpecies(u16 species);
 
 // Three repeatable, Mega-capable species choices for Elm's laboratory.
