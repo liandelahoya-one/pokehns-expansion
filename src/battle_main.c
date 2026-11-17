@@ -2097,7 +2097,14 @@ u8 CreateNPCTrainerPartyFromTrainer(struct Pokemon *party, const struct Trainer 
                     SetMonData(&party[i], MON_DATA_HELD_ITEM, &stone);
             }
 
-            CustomTrainerPartyAssignMoves(&party[i], &partyData[monIndex]);
+            // A forced themed Mega may be a completely different species.
+            // Keep its real learnset instead of inheriting invalid moves from
+            // the original trainer entry.
+            if (IsMegaRandomizerModeEnabled()
+             && GetMonData(&party[i], MON_DATA_SPECIES) != partyData[monIndex].species)
+                GiveMonInitialMoveset(&party[i]);
+            else
+                CustomTrainerPartyAssignMoves(&party[i], &partyData[monIndex]);
             SetMonData(&party[i], MON_DATA_IVS, &(partyData[monIndex].iv));
             if (partyData[monIndex].ev != NULL)
             {
