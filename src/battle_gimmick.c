@@ -80,7 +80,7 @@ bool32 ShouldTrainerBattlerUseGimmick(enum BattlerId battler, enum Gimmick gimmi
     {
         if (gimmick == GIMMICK_MEGA && IsMegaRandomizerModeEnabled()
          && GetBattlerSide(battler) == B_SIDE_OPPONENT
-         && MegaMode_GetStoneForSpecies(gBattleMons[battler].species, TYPE_NONE) == gBattleMons[battler].item)
+         && MegaMode_SpeciesHasStone(gBattleMons[battler].species, gBattleMons[battler].item))
             return TRUE;
         if (gimmick == GIMMICK_TERA && gBattleStruct->opponentMonCanTera & 1 << gBattlerPartyIndexes[battler])
             return TRUE;
