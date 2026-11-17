@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: mega-rom-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-hns:
     runs-on: ubuntu-latest
