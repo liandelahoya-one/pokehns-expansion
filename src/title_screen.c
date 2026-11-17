@@ -27,6 +27,7 @@ enum {
     TAG_VERSION = 1000,
     TAG_PRESS_START_COPYRIGHT,
     TAG_LOGO_SHINE,
+    TAG_MEGA_MADNESS_LOGO,
 };
 
 #define VERSION_BANNER_RIGHT_TILEOFFSET 64
@@ -68,6 +69,8 @@ static const u16 sUnusedUnknownPal[] = INCBIN_U16("graphics/title_screen/unused.
 static const u32 sTitleScreenRayquazaGfx[] = INCBIN_U32("graphics/title_screen/hns/rayquaza.4bpp.smol");
 static const u32 sTitleScreenRayquazaTilemap[] = INCBIN_U32("graphics/title_screen/hns/rayquaza.bin.smolTM");
 static const u32 sTitleScreenLogoShineGfx[] = INCBIN_U32("graphics/title_screen/hns/logo_shine.4bpp.smol");
+static const u32 sMegaMadnessLogoGfx[] = INCBIN_U32("graphics/title_screen/hns/mega_madness_logo.4bpp.smol");
+static const u16 sMegaMadnessLogoPal[] = INCBIN_U16("graphics/title_screen/hns/mega_madness_logo.gbapal");
 #else
 static const u32 sTitleScreenRayquazaGfx[] = INCBIN_U32("graphics/title_screen/rayquaza.4bpp.smol");
 static const u32 sTitleScreenRayquazaTilemap[] = INCBIN_U32("graphics/title_screen/rayquaza.bin.smolTM");
@@ -362,6 +365,61 @@ static const struct CompressedSpriteSheet sPokemonLogoShineSpriteSheet[] =
     {},
 };
 
+
+#if IS_HNS
+// "MEGA MADNESS" overlay. 64x64 indexed source sheet contains
+// two vertically-stacked 64x32 halves for GBA 1D sprite mapping.
+static const struct OamData sMegaMadnessLogoOamData =
+{
+    .y = DISPLAY_HEIGHT,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(64x32),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(64x32),
+    .tileNum = 0,
+    .priority = 0,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+static const union AnimCmd sMegaMadnessLogoAnimLeft[] =
+{
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_END,
+};
+static const union AnimCmd sMegaMadnessLogoAnimRight[] =
+{
+    ANIMCMD_FRAME(32, 0),
+    ANIMCMD_END,
+};
+static const union AnimCmd *const sMegaMadnessLogoAnimTable[] =
+{
+    sMegaMadnessLogoAnimLeft,
+    sMegaMadnessLogoAnimRight,
+};
+static const struct SpriteTemplate sMegaMadnessLogoSpriteTemplate =
+{
+    .tileTag = TAG_MEGA_MADNESS_LOGO,
+    .paletteTag = TAG_MEGA_MADNESS_LOGO,
+    .oam = &sMegaMadnessLogoOamData,
+    .anims = sMegaMadnessLogoAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+static const struct CompressedSpriteSheet sMegaMadnessLogoSpriteSheet[] =
+{
+    {sMegaMadnessLogoGfx, 0x800, TAG_MEGA_MADNESS_LOGO},
+    {},
+};
+static const struct SpritePalette sMegaMadnessLogoSpritePalette[] =
+{
+    {sMegaMadnessLogoPal, TAG_MEGA_MADNESS_LOGO},
+    {},
+};
+#endif
+
 // Task data for the main title screen tasks (Task_TitleScreenPhase#)
 #define tCounter    data[0]
 #define tSkipToNext data[1]
@@ -631,6 +689,10 @@ void CB2_InitTitleScreen(void)
         LoadCompressedSpriteSheet(&sPokemonLogoShineSpriteSheet[0]);
         LoadPalette(gTitleScreenEmeraldVersionPal, OBJ_PLTT_ID(0), PLTT_SIZE_4BPP);
         LoadSpritePalette(&sSpritePalette_PressStart[0]);
+#if IS_HNS
+        LoadCompressedSpriteSheet(&sMegaMadnessLogoSpriteSheet[0]);
+        LoadSpritePalette(&sMegaMadnessLogoSpritePalette[0]);
+#endif
         gMain.state = 2;
         break;
     case 2:
@@ -641,6 +703,18 @@ void CB2_InitTitleScreen(void)
         gTasks[taskId].tSkipToNext = FALSE;
         gTasks[taskId].tPointless = -16;
         gTasks[taskId].tBg2Y = -32;
+#if IS_HNS
+        // Composition matches the 240x160 Heart & Soul title screen:
+        // the two halves cover x=64..191, y=64..95.
+        {
+            u8 left = CreateSprite(&sMegaMadnessLogoSpriteTemplate, 96, 80, 0);
+            u8 right = CreateSprite(&sMegaMadnessLogoSpriteTemplate, 160, 80, 0);
+            if (left != MAX_SPRITES)
+                StartSpriteAnim(&gSprites[left], 0);
+            if (right != MAX_SPRITES)
+                StartSpriteAnim(&gSprites[right], 1);
+        }
+#endif
         gMain.state = 3;
         break;
     }
