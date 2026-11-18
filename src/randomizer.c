@@ -1,5 +1,8 @@
 #include "randomizer.h"
 #include "mega_mode.h"
+#if IS_HNS
+#include "constants/opponents_hns.h"
+#endif
 
 #if RANDOMIZER_AVAILABLE
 #include "main.h"
@@ -388,7 +391,8 @@ struct Sfc32State RandomizerRandSeed(enum RandomizerReason reason, u32 data1, u3
     // The Mega encounter-slot rolls must remain fixed for a route even in
     // Chaos Mode; the ordinary wild species randomizer can still vary.
     if (IsChaosMode() && reason != RANDOMIZER_REASON_ABILITIES
-        && reason != RANDOMIZER_REASON_MEGA_WILD_ENCOUNTER)
+        && reason != RANDOMIZER_REASON_MEGA_WILD_ENCOUNTER
+        && reason != RANDOMIZER_REASON_PERSISTENT_RIVAL)
     {
         state.a = Random32();
         state.b = Random32();
@@ -403,6 +407,10 @@ struct Sfc32State RandomizerRandSeed(enum RandomizerReason reason, u32 data1, u3
 
     {
         const u32 randomizerSeed = GetRandomizerSeed();
+        // Keep the original first-encounter trainer roll for existing saves.
+        // Only the persistence behavior is new, not the species seed.
+        if (reason == RANDOMIZER_REASON_PERSISTENT_RIVAL)
+            reason = RANDOMIZER_REASON_TRAINER_PARTY;
         state.a = randomizerSeed + (u32)reason;
         state.b = randomizerSeed ^ data2;
         state.c = data1;
@@ -1146,10 +1154,169 @@ bool32 IsRandomizationPossible(u16 originalSpecies, u16 targetSpecies)
     return TRUE;
 }
 
+#if IS_HNS
+// Silver's normal parties expand and evolve across seven scripted encounters.
+// Key every recurring member to its *first* appearance, rather than the
+// current trainer ID/party size. This reconstructs the same team from the
+// existing player Trainer ID: no extra save bytes or one-time event required.
+static u8 GetRivalEvolutionDepth(u16 species, u16 *baseSpecies)
+{
+    u8 depth = 0;
+
+    // Bloodmoon Ursaluna is a separate form, not always a normal evolution
+    // target in the expansion's species data.
+    if (species == SPECIES_URSALUNA_BLOODMOON)
+    {
+        species = SPECIES_URSARING;
+        depth = 1;
+    }
+
+    while (depth < 4)
+    {
+        u16 previous = GetSpeciesPreEvolution(species);
+        if (previous == SPECIES_NONE || previous == species)
+            break;
+        species = previous;
+        depth++;
+    }
+
+    *baseSpecies = species;
+    return depth;
+}
+
+static u16 AdvanceRivalEvolution(u16 species, u8 steps)
+{
+    while (steps-- > 0)
+    {
+        const struct Evolution *evolutions = GetSpeciesEvolutions(species);
+        u16 nextSpecies = SPECIES_NONE;
+        u32 i;
+
+        if (evolutions == NULL)
+            break;
+        for (i = 0; evolutions[i].method != 0xFFFF; i++)
+        {
+            if (IsSpeciesEnabled(evolutions[i].targetSpecies)
+                && IsSpeciesValidForRandomizer(evolutions[i].targetSpecies))
+            {
+                nextSpecies = evolutions[i].targetSpecies;
+                break;
+            }
+        }
+        if (nextSpecies == SPECIES_NONE || nextSpecies == species)
+            break;
+        species = nextSpecies;
+    }
+    return species;
+}
+
+static u16 RandomizePersistentRivalMon(u16 trainerId, u8 slot, u8 totalMons, u16 species)
+{
+    const u16 rivalSeriesStart = TRAINER_RIVAL_CHIKORITA_1_HNS;
+    const u16 series = (trainerId - rivalSeriesStart) / 7;
+    const u16 firstTrainer = rivalSeriesStart + series * 7;
+    enum RandomizerSpeciesMode mode = GetRandomizerOption(RANDOMIZER_OPTION_SPECIES_MODE);
+    u16 family, firstSpecies = SPECIES_NONE;
+    u8 stage = GetRivalEvolutionDepth(species, &family);
+    u8 encounter = 0, firstSlot = 0, firstTotal = 1;
+    u16 randomizedSpecies;
+    u32 seed;
+
+    // Original first appearances in src/data/trainers_hns.party.
+    // Using their exact prior seeds preserves already-seen randomized members
+    // on normal (non-Chaos) saves, including a Zeraora from the first battle.
+    switch (family)
+    {
+    case SPECIES_CHIKORITA:
+    case SPECIES_CYNDAQUIL:
+    case SPECIES_TOTODILE:
+        firstSpecies = family;
+        break;
+    case SPECIES_ZUBAT:
+        firstSpecies = SPECIES_ZUBAT;
+        encounter = 1; firstSlot = 0; firstTotal = 3;
+        break;
+    case SPECIES_LARVITAR:
+        firstSpecies = SPECIES_LARVITAR;
+        encounter = 1; firstSlot = 1; firstTotal = 3;
+        break;
+    case SPECIES_REMORAID:
+        if (series == 0) // Chikorita rival
+        {
+            firstSpecies = SPECIES_REMORAID;
+            encounter = 2; firstSlot = 1; firstTotal = 4;
+        }
+        else if (series == 1) // Cyndaquil rival
+        {
+            firstSpecies = SPECIES_OCTILLERY;
+            encounter = 3; firstSlot = 2; firstTotal = 5;
+        }
+        break;
+    case SPECIES_HOUNDOUR:
+        if (series == 0)
+        {
+            firstSpecies = SPECIES_HOUNDOOM;
+            encounter = 3; firstSlot = 1; firstTotal = 5;
+        }
+        else if (series == 2)
+        {
+            firstSpecies = SPECIES_HOUNDOUR;
+            encounter = 2; firstSlot = 1; firstTotal = 4;
+        }
+        break;
+    case SPECIES_BELLSPROUT:
+        if (series == 1)
+        {
+            firstSpecies = SPECIES_WEEPINBELL;
+            encounter = 2; firstSlot = 1; firstTotal = 4;
+        }
+        else if (series == 2)
+        {
+            firstSpecies = SPECIES_VICTREEBEL;
+            encounter = 3; firstSlot = 1; firstTotal = 5;
+        }
+        break;
+    case SPECIES_TEDDIURSA:
+        firstSpecies = SPECIES_URSARING;
+        encounter = 4; firstSlot = 0; firstTotal = 6;
+        break;
+    default:
+        break;
+    }
+
+    // Future custom rival species fall back to their original slot-based roll.
+    if (firstSpecies == SPECIES_NONE)
+    {
+        seed = ((u32)trainerId << 16) | ((u32)totalMons << 8) | slot;
+        return RandomizeMon(RANDOMIZER_REASON_TRAINER_PARTY, mode, seed, species);
+    }
+
+    seed = ((u32)(firstTrainer + encounter) << 16)
+         | ((u32)firstTotal << 8) | firstSlot;
+    randomizedSpecies = RandomizeMon(RANDOMIZER_REASON_PERSISTENT_RIVAL,
+                                    mode, seed, firstSpecies);
+
+    // A random starter that cannot evolve (e.g. Zeraora) stays itself.
+    // Evolvable replacements develop as Silver's original member does.
+    {
+        u16 unusedBase;
+        u8 firstStage = GetRivalEvolutionDepth(firstSpecies, &unusedBase);
+        if (stage > firstStage)
+            randomizedSpecies = AdvanceRivalEvolution(randomizedSpecies, stage - firstStage);
+    }
+    return randomizedSpecies;
+}
+#endif
+
 u16 RandomizeTrainerMon(u16 trainerId, u8 slot, u8 totalMons, u16 species)
 {
     if (RandomizerFeatureEnabled(RANDOMIZE_TRAINER_MON))
     {
+#if IS_HNS
+        if (trainerId >= TRAINER_RIVAL_CHIKORITA_1_HNS
+            && trainerId <= TRAINER_RIVAL_TOTODILE_7_HNS)
+            return RandomizePersistentRivalMon(trainerId, slot, totalMons, species);
+#endif
         u32 seed;
         seed = (u32)trainerId << 16;
         seed |= (u32)totalMons << 8;

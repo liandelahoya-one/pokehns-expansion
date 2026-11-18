@@ -255,6 +255,46 @@ static u64 GetAiFlags(u16 trainerId, enum BattlerId battler)
         }
     }
 
+#if IS_HNS
+    // Mega Mode's stronger AI applies only to regular NPC trainer battles.
+    // Leave scripted/tutorial, recorded, Frontier, wild and link AI untouched.
+    // No save data is allocated or altered by this rule.
+    if (trainerId != 0xFFFF && !IsSpecialTrainer(trainerId)
+        && !(gBattleTypeFlags & (BATTLE_TYPE_RECORDED | BATTLE_TYPE_SAFARI
+                               | BATTLE_TYPE_ROAMER | BATTLE_TYPE_FIRST_BATTLE
+                               | BATTLE_TYPE_FACTORY | BATTLE_TYPE_FRONTIER
+                               | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_HILL
+                               | BATTLE_TYPE_SECRET_BASE)))
+    {
+        const enum TrainerClassID trainerClass = GetTrainerClassFromId(trainerId);
+
+        // Even route trainers check possible KOs, survival, damage, and
+        // replacements instead of blindly picking from their move lists.
+        flags |= AI_FLAG_BASIC_TRAINER | AI_FLAG_TRY_TO_2HKO
+               | AI_FLAG_HP_AWARE | AI_FLAG_SMART_SWITCHING
+               | AI_FLAG_WEIGH_ABILITY_PREDICTION
+               | AI_FLAG_RANDOMIZE_SWITCHIN | AI_FLAG_PP_STALL_PREVENTION;
+
+        // Bosses additionally consider predicted moves and switches. We use
+        // inference flags instead of OMNISCIENT so they are not handed the
+        // player's hidden moves and items as perfect information.
+        switch (trainerClass)
+        {
+        case TRAINER_CLASS_LEADER_HNS:
+        case TRAINER_CLASS_LEADER_KANTO_HNS:
+        case TRAINER_CLASS_ELITE_FOUR_HNS:
+        case TRAINER_CLASS_CHAMPION_HNS:
+        case TRAINER_CLASS_RIVAL_HNS:
+        case TRAINER_CLASS_ROCKET_ADMIN_HNS:
+        case TRAINER_CLASS_MYSTERY_MAN_HNS:
+            flags |= AI_FLAG_PREDICTION | AI_FLAG_ASSUMPTIONS;
+            break;
+        default:
+            break;
+        }
+    }
+#endif
+
     if (IsDoubleBattle() && flags != 0)
     {
         flags |= AI_FLAG_DOUBLE_BATTLE;

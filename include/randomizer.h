@@ -53,6 +53,9 @@ enum RandomizerReason
     RANDOMIZER_REASON_TYPE_EFFECTIVENESS,
     // Appended without shifting the preexisting seed streams.
     RANDOMIZER_REASON_MEGA_WILD_ENCOUNTER,
+    // New stream: remapped to the original trainer stream when seeded,
+    // but stable even if Chaos Mode is enabled.
+    RANDOMIZER_REASON_PERSISTENT_RIVAL,
 };
 
 enum RandomizerOption {
