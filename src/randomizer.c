@@ -1058,7 +1058,7 @@ u16 RandomizeMon(enum RandomizerReason reason, enum RandomizerSpeciesMode mode, 
     return MegaMode_NormalizeBattleForm(resultSpecies);
 }
 
-// Each map/encounter-table slot gets a persistent 25% Mega-capable roll.
+// Each map/encounter-table slot gets a persistent 25/50/75/100% Mega-capable roll.
 // This chooses species that can Mega Evolve directly with a held stone;
 // pre-evolutions and actual Mega forms are excluded. We keep the map and
 // slot fixed even if MAP SEEDED is off, avoiding per-battle slot changes.
@@ -1072,8 +1072,9 @@ static u16 RandomizeMegaModeWildSlot(u16 originalSpecies, u8 mapNum, u8 mapGroup
     u16 chosen = SPECIES_NONE;
     u32 candidates = 0;
 
-    // The first roll selects roughly one of every four available slots.
-    if (RandomizerNextRange(&rng, 4) != 0)
+    // 0 = 25%, 1 = 50%, 2 = 75%, 3 = 100%. Using the same
+    // four-way roll preserves every previously selected slot at 25%.
+    if (RandomizerNextRange(&rng, 4) > gSaveBlock3Ptr->challengeSettings.tx_Random_MegaEncounterBooster)
         return SPECIES_NONE;
 
     // Reservoir sampling produces an unbiased pick from the legal pool.
