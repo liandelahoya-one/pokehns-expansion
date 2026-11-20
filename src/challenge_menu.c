@@ -92,6 +92,7 @@ enum {
     ITEM_RANDOM_ITEMS,
     ITEM_RANDOM_CHAOS,
     ITEM_RANDOM_MEGA_MODE,
+    ITEM_RANDOM_MEGA_BOOSTER,
     ITEM_RANDOM_NEXT,
     ITEM_RANDOM_COUNT,
 };
@@ -199,8 +200,8 @@ static const u8 sMidGameLockPolicy[TAB_COUNT * MAX_ITEMS_PER_TAB] = {
     [TAB_RANDOMIZER * MAX_ITEMS_PER_TAB + ITEM_RANDOM_ITEMS]       = LOCK_ONEWAY_DOWN,
     [TAB_RANDOMIZER * MAX_ITEMS_PER_TAB + ITEM_RANDOM_CHAOS]       = LOCK_ONEWAY_DOWN,
     [TAB_RANDOMIZER * MAX_ITEMS_PER_TAB + ITEM_RANDOM_MEGA_MODE]   = LOCK_ONEWAY_DOWN,
-    // MAP_BASED, SIMILAR and GEN_SCOPE are LOCK_FREE (default 0) -- GEN_SCOPE is
-    // deliberately adjustable in both directions mid-run.
+    // MAP_BASED, SIMILAR, GEN_SCOPE and MEGA BOOST are LOCK_FREE (default 0).
+    // Mega booster can be adjusted mid-run without resetting encounter slots.
     // TAB_NUZLOCKE
     [TAB_NUZLOCKE * MAX_ITEMS_PER_TAB + ITEM_NUZLOCKE_NUZLOCKE]      = LOCK_ONEWAY_DOWN,
     [TAB_NUZLOCKE * MAX_ITEMS_PER_TAB + ITEM_NUZLOCKE_SPECIES_CLAUSE] = LOCK_ONEWAY_DOWN,
@@ -522,6 +523,13 @@ static const u8 *const sChoices_GenScope[] = {
     COMPOUND_STRING("GEN 1-3"),
 };
 
+static const u8 *const sChoices_MegaBooster[] = {
+    COMPOUND_STRING("25%"),
+    COMPOUND_STRING("50%"),
+    COMPOUND_STRING("75%"),
+    COMPOUND_STRING("100%"),
+};
+
 static const u8 *const sChoices_OffChaos[] = {
     COMPOUND_STRING("OFF"),
     COMPOUND_STRING("CHAOS"),
@@ -784,6 +792,12 @@ static const u8 *const sDesc_MegaMode[] = {
     COMPOUND_STRING("Original Mega rules apply."),
     COMPOUND_STRING("Unrestricted Megas, matching stones,\nand themed Mega boss teams."),
 };
+static const u8 *const sDesc_MegaBooster[] = {
+    COMPOUND_STRING("25% of wild encounter slots\ncontain Mega-capable {PKMN}."),
+    COMPOUND_STRING("50% of wild encounter slots\ncontain Mega-capable {PKMN}."),
+    COMPOUND_STRING("75% of wild encounter slots\ncontain Mega-capable {PKMN}."),
+    COMPOUND_STRING("100% of wild encounter slots\ncontain Mega-capable {PKMN}."),
+};
 static const u8 *const sDesc_RandomNext[] = {
     COMPOUND_STRING("Continue to Nuzlocke options."),
 };
@@ -896,6 +910,12 @@ static const struct ChallengeMenuItem sTabItems_Randomizer[] = {
         .descriptions = sDesc_MegaMode,
         .numChoices   = 2,
         .choiceNames  = sChoices_OffOn,
+    },
+    [ITEM_RANDOM_MEGA_BOOSTER] = {
+        .name         = COMPOUND_STRING("MEGA BOOST"),
+        .descriptions = sDesc_MegaBooster,
+        .numChoices   = ARRAY_COUNT(sChoices_MegaBooster),
+        .choiceNames  = sChoices_MegaBooster,
     },
     [ITEM_RANDOM_NEXT] = {
         .name         = COMPOUND_STRING("NEXT"),
@@ -1326,6 +1346,9 @@ static bool8 CheckConditions(u8 tab, u8 itemIndex)
             return TRUE;
         case ITEM_RANDOM_MAP_BASED:
             return masterOn && *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_WILD_PKMN);
+        case ITEM_RANDOM_MEGA_BOOSTER:
+            return masterOn && *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_MODE)
+                   && *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_WILD_PKMN);
         case ITEM_RANDOM_SIMILAR:
             return masterOn && anyPkmn && !(*GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_CHAOS));
         case ITEM_RANDOM_LEGENDARIES:
@@ -2030,6 +2053,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
         cs->tx_Random_Items            = 0;
         cs->tx_Random_Chaos            = 0;
         cs->tx_Random_MegaMode         = 0;
+        cs->tx_Random_MegaEncounterBooster = 0;
     }
     else
     {
@@ -2050,6 +2074,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
         cs->tx_Random_Items            = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_ITEMS);
         cs->tx_Random_Chaos            = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_CHAOS);
         cs->tx_Random_MegaMode         = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_MODE);
+        cs->tx_Random_MegaEncounterBooster = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_BOOSTER);
     }
 
     // Nuzlocke tab — decompose selection back to 3 bits (matches HnS encoding)
@@ -2272,6 +2297,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_ITEMS)       = cs->tx_Random_Items;
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_CHAOS)       = cs->tx_Random_Chaos;
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_MODE)   = cs->tx_Random_MegaMode;
+            *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_MEGA_BOOSTER)= cs->tx_Random_MegaEncounterBooster;
 
             // Nuzlocke tab — 3 bits → 4 selection states (matches HnS encoding)
             if (cs->tx_Challenges_Nuzlocke && cs->tx_Challenges_NuzlockeHardcore)
