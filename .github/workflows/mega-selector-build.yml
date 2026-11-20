@@ -1,0 +1,63 @@
+name: Mega Madness Selectable Encounter Booster GBA
+
+on:
+  push:
+    branches:
+      - feature/mega-encounter-booster-selector
+    paths:
+      - src/challenge_menu.c
+      - src/randomizer.c
+      - src/new_game.c
+      - include/global.h
+      - .github/workflows/mega-selector-build.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-selector-gba:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout selector branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install GBA build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
+
+      - name: Compile Heart and Soul with Mega Boost options
+        run: make hns -j2
+
+      - name: Check ROM header and rename
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          data = Path("pokehns.gba").read_bytes()
+          assert 8 * 1024 * 1024 <= len(data) <= 32 * 1024 * 1024
+          assert data[0xA0:0xA0+11] == b"POKEMON HNS"
+          assert data[0xAC:0xB0] == b"BPEE"
+          print("Validated Heart & Soul GBA:", len(data), "bytes")
+          PY
+          mv pokehns.gba MegaMadness_MegaBoost_25_50_75_100.gba
+
+      - name: Upload downloadable GBA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MegaMadness-MegaBoost-25-50-75-100
+          path: MegaMadness_MegaBoost_25_50_75_100.gba
+          if-no-files-found: error
+
+      - name: Commit GBA to separate selector branch for direct download
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f MegaMadness_MegaBoost_25_50_75_100.gba
+          if ! git diff --cached --quiet; then
+            git commit -m "Build Mega Boost selector playable GBA [skip ci]"
+            git push origin HEAD:feature/mega-encounter-booster-selector
+          fi
