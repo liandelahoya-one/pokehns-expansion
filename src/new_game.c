@@ -153,6 +153,7 @@ void SetDefaultChallengeSettings(void)
     gSaveblock3.challengeSettings.tx_Random_Similar          = 1;
     gSaveblock3.challengeSettings.tx_Random_MapBased         = 1;
     gSaveblock3.challengeSettings.tx_Random_GenScope         = RANDOMIZER_DEFAULT_GEN_SCOPE_1_3;
+    gSaveblock3.challengeSettings.tx_Random_MegaEncounterBooster = 0; // 25%
 
     // Nuzlocke clause defaults (shown when Nuzlocke is NORMAL/HARD)
     gSaveblock3.challengeSettings.tx_Nuzlocke_SpeciesClause  = 1;
