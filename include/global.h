@@ -341,6 +341,9 @@ struct ChallengeSettings
     // Mega Mode occupies a spare bit in the final settings byte. It must not
     // shift the save layout or alter any existing setting's offset.
     u8 tx_Random_MegaMode:1;
+    // 0/1/2/3 = 25/50/75/100% Mega-capable wild encounter slots.
+    // Fits in previously unused bits of the same byte (no save-layout shift).
+    u8 tx_Random_MegaEncounterBooster:2;
 };
 
 struct SaveBlock3
