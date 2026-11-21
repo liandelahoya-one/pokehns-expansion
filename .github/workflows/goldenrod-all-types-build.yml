@@ -1,0 +1,81 @@
+name: Mega Madness Goldenrod All-Type TMs GBA
+
+on:
+  push:
+    branches:
+      - feature/mega-goldenrod-all-types-tms
+    paths:
+      - .github/workflows/goldenrod-all-types-build.yml
+      - include/constants/tms_hms.h
+      - include/constants/items.h
+      - src/data/items.h
+      - data/maps/GoldenrodCity_DepartmentStore_5F_hns/scripts.inc
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-all-types-tm-rom:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout Goldenrod expanded-TM branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Verify all 18 type trios and original TMs
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          script = Path("data/maps/GoldenrodCity_DepartmentStore_5F_hns/scripts.inc").read_text()
+          shop = script.split("GoldenrodDeptStore5_Pokemart:")[1].split("pokemartlistend")[0]
+          moves = re.findall(r"\.2byte ITEM_TM_(\w+)", shop)
+          assert len(moves) == 70, f"Expected 70 shop TMs, got {len(moves)}"
+          assert len(set(moves)) == len(moves), "Duplicate shop TM"
+          legacy = "DRAGON_CLAW DRAGON_PULSE DRAGON_DANCE DRACO_METEOR CALM_MIND BULK_UP SWORDS_DANCE STEALTH_ROCK ROOST SUBSTITUTE EARTHQUAKE ICE_BEAM BLIZZARD THUNDERBOLT THUNDER FLAMETHROWER FIRE_BLAST PSYCHIC SHADOW_BALL DARK_PULSE FLASH_CANNON ENERGY_BALL FOCUS_BLAST DRAIN_PUNCH STONE_EDGE ROCK_SLIDE WILL_O_WISP THUNDER_WAVE U_TURN TRICK_ROOM PROTECT LIGHT_SCREEN REFLECT HYPER_BEAM".split()
+          assert moves[:len(legacy)] == legacy, "Original 34 Goldenrod TMs modified or reordered"
+          consts = Path("include/constants/items.h").read_text()
+          for old in ("ITEM_TM01 = 582", "ITEM_TM100 = 681", "ITEM_HM01 = 682", "ITEM_HM08 = 689", "ITEM_GB_PLAYER    = 874"):
+              assert old in consts, "Save item mapping changed: " + old
+          print("Verified all 70 shop TMs and unchanged legacy item IDs")
+          PY
+
+      - name: Install GBA compiler dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
+
+      - name: Compile Heart & Soul Mega Madness
+        run: make hns -j2
+
+      - name: Verify GBA header and name ROM
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          b=Path("pokehns.gba").read_bytes()
+          assert 8*1024*1024 <= len(b) <= 32*1024*1024
+          assert b[0xA0:0xAB] == b"POKEMON HNS"
+          assert b[0xAC:0xB0] == b"BPEE"
+          print("ROM passes size and GBA header checks:", len(b), "bytes")
+          PY
+          mv pokehns.gba MegaMadness_Goldenrod_AllTypes_TMs.gba
+
+      - name: Upload playable GBA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MegaMadness-Goldenrod-AllTypes-TMs
+          path: MegaMadness_Goldenrod_AllTypes_TMs.gba
+          if-no-files-found: error
+
+      - name: Commit GBA to this branch for direct download
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f MegaMadness_Goldenrod_AllTypes_TMs.gba
+          if ! git diff --cached --quiet; then
+            git commit -m "Build Goldenrod all-type TMs GBA [skip ci]"
+            git push origin HEAD:feature/mega-goldenrod-all-types-tms
+          fi
