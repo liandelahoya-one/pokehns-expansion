@@ -822,6 +822,35 @@ enum __attribute__((packed)) Item
     ITEM_HM08 = 689,
 
 
+    // Numbered TMs must be declared before the generated move-name aliases.
+    // Values 901-926 deliberately follow all original 0-900 item IDs.
+    ITEM_TM101 = 901,
+    ITEM_TM102 = 902,
+    ITEM_TM103 = 903,
+    ITEM_TM104 = 904,
+    ITEM_TM105 = 905,
+    ITEM_TM106 = 906,
+    ITEM_TM107 = 907,
+    ITEM_TM108 = 908,
+    ITEM_TM109 = 909,
+    ITEM_TM110 = 910,
+    ITEM_TM111 = 911,
+    ITEM_TM112 = 912,
+    ITEM_TM113 = 913,
+    ITEM_TM114 = 914,
+    ITEM_TM115 = 915,
+    ITEM_TM116 = 916,
+    ITEM_TM117 = 917,
+    ITEM_TM118 = 918,
+    ITEM_TM119 = 919,
+    ITEM_TM120 = 920,
+    ITEM_TM121 = 921,
+    ITEM_TM122 = 922,
+    ITEM_TM123 = 923,
+    ITEM_TM124 = 924,
+    ITEM_TM125 = 925,
+    ITEM_TM126 = 926,
+
     /* Expands to:
      *   ITEM_TM_FOCUS_PUNCH = ITEM_TM01,
      *   ...
@@ -1081,36 +1110,8 @@ enum __attribute__((packed)) Item
     ITEM_UNUSED_BERRY_3,
     ITEM_AZURE_FLUTE,
 
-    // New Mega Madness TMs are appended AFTER every legacy item ID.
-    // Never insert them inside the original TM/HM ID range: old saves store IDs.
-    ITEM_TM101,
-    ITEM_TM102,
-    ITEM_TM103,
-    ITEM_TM104,
-    ITEM_TM105,
-    ITEM_TM106,
-    ITEM_TM107,
-    ITEM_TM108,
-    ITEM_TM109,
-    ITEM_TM110,
-    ITEM_TM111,
-    ITEM_TM112,
-    ITEM_TM113,
-    ITEM_TM114,
-    ITEM_TM115,
-    ITEM_TM116,
-    ITEM_TM117,
-    ITEM_TM118,
-    ITEM_TM119,
-    ITEM_TM120,
-    ITEM_TM121,
-    ITEM_TM122,
-    ITEM_TM123,
-    ITEM_TM124,
-    ITEM_TM125,
-    ITEM_TM126,
-
-    ITEMS_COUNT,
+    // Legacy item IDs remain stable; newest TMs are at the end of the ID range.
+    ITEMS_COUNT = ITEM_TM126 + 1,
     ITEM_FIELD_ARROW = ITEMS_COUNT,
 };
 
