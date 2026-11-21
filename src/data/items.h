@@ -13574,8 +13574,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM95"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches BODY SLAM\\n"
-            "to a compatible\\n"
+            "Teaches BODY SLAM\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13588,8 +13588,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM96"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches HYPER VOICE\\n"
-            "to a compatible\\n"
+            "Teaches HYPER VOICE\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13602,8 +13602,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM97"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches FLARE BLITZ\\n"
-            "to a compatible\\n"
+            "Teaches FLARE BLITZ\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13616,8 +13616,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM98"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches HYDRO PUMP\\n"
-            "to a compatible\\n"
+            "Teaches HYDRO PUMP\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13630,8 +13630,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM99"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches LIQUIDATION\\n"
-            "to a compatible\\n"
+            "Teaches LIQUIDATION\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13644,8 +13644,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM100"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches SCALD\\n"
-            "to a compatible\\n"
+            "Teaches SCALD\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13658,8 +13658,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM101"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches WILD CHARGE\\n"
-            "to a compatible\\n"
+            "Teaches WILD CHARGE\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13672,8 +13672,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM102"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches LEAF STORM\\n"
-            "to a compatible\\n"
+            "Teaches LEAF STORM\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13686,8 +13686,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM103"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches POWER WHIP\\n"
-            "to a compatible\\n"
+            "Teaches POWER WHIP\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13700,8 +13700,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM104"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches ICICLE CRASH\\n"
-            "to a compatible\\n"
+            "Teaches ICICLE CRASH\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13714,8 +13714,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM105"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches CLOSE COMBAT\\n"
-            "to a compatible\\n"
+            "Teaches CLOSE COMBAT\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13728,8 +13728,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM106"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches AURA SPHERE\\n"
-            "to a compatible\\n"
+            "Teaches AURA SPHERE\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13742,8 +13742,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM107"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches GUNK SHOT\\n"
-            "to a compatible\\n"
+            "Teaches GUNK SHOT\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13756,8 +13756,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM108"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches HIGH HORSEPOWER\\n"
-            "to a compatible\\n"
+            "Teaches HIGH HORSEPOWER\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13770,8 +13770,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM109"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches EARTH POWER\\n"
-            "to a compatible\\n"
+            "Teaches EARTH POWER\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13784,8 +13784,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM110"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches HURRICANE\\n"
-            "to a compatible\\n"
+            "Teaches HURRICANE\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13798,8 +13798,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM111"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches BRAVE BIRD\\n"
-            "to a compatible\\n"
+            "Teaches BRAVE BIRD\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13812,8 +13812,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM112"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches AIR SLASH\\n"
-            "to a compatible\\n"
+            "Teaches AIR SLASH\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13826,8 +13826,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM113"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches FUTURE SIGHT\\n"
-            "to a compatible\\n"
+            "Teaches FUTURE SIGHT\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13840,8 +13840,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM114"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches ZEN HEADBUTT\\n"
-            "to a compatible\\n"
+            "Teaches ZEN HEADBUTT\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13854,8 +13854,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM115"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches MEGAHORN\\n"
-            "to a compatible\\n"
+            "Teaches MEGAHORN\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13868,8 +13868,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM116"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches BUG BUZZ\\n"
-            "to a compatible\\n"
+            "Teaches BUG BUZZ\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13882,8 +13882,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM117"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches HEAD SMASH\\n"
-            "to a compatible\\n"
+            "Teaches HEAD SMASH\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13896,8 +13896,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM118"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches POWER GEM\\n"
-            "to a compatible\\n"
+            "Teaches POWER GEM\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13910,8 +13910,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM119"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches POLTERGEIST\\n"
-            "to a compatible\\n"
+            "Teaches POLTERGEIST\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13924,8 +13924,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM120"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches FOUL PLAY\\n"
-            "to a compatible\\n"
+            "Teaches FOUL PLAY\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13938,8 +13938,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM121"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches CRUNCH\\n"
-            "to a compatible\\n"
+            "Teaches CRUNCH\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13952,8 +13952,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM122"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches STEEL BEAM\\n"
-            "to a compatible\\n"
+            "Teaches STEEL BEAM\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13966,8 +13966,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM123"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches IRON HEAD\\n"
-            "to a compatible\\n"
+            "Teaches IRON HEAD\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13980,8 +13980,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM124"),
         .price = 22000,
         .description = COMPOUND_STRING(
-            "Teaches MOONBLAST\\n"
-            "to a compatible\\n"
+            "Teaches MOONBLAST\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -13994,8 +13994,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM125"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches PLAY ROUGH\\n"
-            "to a compatible\\n"
+            "Teaches PLAY ROUGH\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
@@ -14008,8 +14008,8 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("TM126"),
         .price = 12000,
         .description = COMPOUND_STRING(
-            "Teaches DAZZLING GLEAM\\n"
-            "to a compatible\\n"
+            "Teaches DAZZLING GLEAM\n"
+            "to a compatible\n"
             "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
