@@ -13569,66 +13569,448 @@ const struct ItemInfo gItemsInfo[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM95] =
+    [ITEM_TM95] = // BODY SLAM
     {
         .name = ITEM_NAME("TM95"),
-        .price = 3000,
-        .description = sQuestionMarksDesc, // Todo
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches BODY SLAM\\n"
+            "to a compatible\\n"
+            "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM96] =
+    [ITEM_TM96] = // HYPER VOICE
     {
         .name = ITEM_NAME("TM96"),
-        .price = 3000,
-        .description = sQuestionMarksDesc, // Todo
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches HYPER VOICE\\n"
+            "to a compatible\\n"
+            "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM97] =
+    [ITEM_TM97] = // FLARE BLITZ
     {
         .name = ITEM_NAME("TM97"),
-        .price = 3000,
-        .description = sQuestionMarksDesc, // Todo
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches FLARE BLITZ\\n"
+            "to a compatible\\n"
+            "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM98] =
+    [ITEM_TM98] = // HYDRO PUMP
     {
         .name = ITEM_NAME("TM98"),
-        .price = 3000,
-        .description = sQuestionMarksDesc, // Todo
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches HYDRO PUMP\\n"
+            "to a compatible\\n"
+            "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM99] =
+    [ITEM_TM99] = // LIQUIDATION
     {
         .name = ITEM_NAME("TM99"),
-        .price = 3000,
-        .description = sQuestionMarksDesc, // Todo
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches LIQUIDATION\\n"
+            "to a compatible\\n"
+            "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM100] =
+    [ITEM_TM100] = // SCALD
     {
         .name = ITEM_NAME("TM100"),
-        .price = 3000,
-        .description = sQuestionMarksDesc, // Todo
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches SCALD\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM101] = // WILD CHARGE
+    {
+        .name = ITEM_NAME("TM101"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches WILD CHARGE\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM102] = // LEAF STORM
+    {
+        .name = ITEM_NAME("TM102"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches LEAF STORM\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM103] = // POWER WHIP
+    {
+        .name = ITEM_NAME("TM103"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches POWER WHIP\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM104] = // ICICLE CRASH
+    {
+        .name = ITEM_NAME("TM104"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches ICICLE CRASH\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM105] = // CLOSE COMBAT
+    {
+        .name = ITEM_NAME("TM105"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches CLOSE COMBAT\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM106] = // AURA SPHERE
+    {
+        .name = ITEM_NAME("TM106"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches AURA SPHERE\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM107] = // GUNK SHOT
+    {
+        .name = ITEM_NAME("TM107"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches GUNK SHOT\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM108] = // HIGH HORSEPOWER
+    {
+        .name = ITEM_NAME("TM108"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches HIGH HORSEPOWER\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM109] = // EARTH POWER
+    {
+        .name = ITEM_NAME("TM109"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches EARTH POWER\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM110] = // HURRICANE
+    {
+        .name = ITEM_NAME("TM110"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches HURRICANE\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM111] = // BRAVE BIRD
+    {
+        .name = ITEM_NAME("TM111"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches BRAVE BIRD\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM112] = // AIR SLASH
+    {
+        .name = ITEM_NAME("TM112"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches AIR SLASH\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM113] = // FUTURE SIGHT
+    {
+        .name = ITEM_NAME("TM113"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches FUTURE SIGHT\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM114] = // ZEN HEADBUTT
+    {
+        .name = ITEM_NAME("TM114"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches ZEN HEADBUTT\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM115] = // MEGAHORN
+    {
+        .name = ITEM_NAME("TM115"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches MEGAHORN\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM116] = // BUG BUZZ
+    {
+        .name = ITEM_NAME("TM116"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches BUG BUZZ\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM117] = // HEAD SMASH
+    {
+        .name = ITEM_NAME("TM117"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches HEAD SMASH\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM118] = // POWER GEM
+    {
+        .name = ITEM_NAME("TM118"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches POWER GEM\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM119] = // POLTERGEIST
+    {
+        .name = ITEM_NAME("TM119"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches POLTERGEIST\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM120] = // FOUL PLAY
+    {
+        .name = ITEM_NAME("TM120"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches FOUL PLAY\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM121] = // CRUNCH
+    {
+        .name = ITEM_NAME("TM121"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches CRUNCH\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM122] = // STEEL BEAM
+    {
+        .name = ITEM_NAME("TM122"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches STEEL BEAM\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM123] = // IRON HEAD
+    {
+        .name = ITEM_NAME("TM123"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches IRON HEAD\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM124] = // MOONBLAST
+    {
+        .name = ITEM_NAME("TM124"),
+        .price = 22000,
+        .description = COMPOUND_STRING(
+            "Teaches MOONBLAST\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM125] = // PLAY ROUGH
+    {
+        .name = ITEM_NAME("TM125"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches PLAY ROUGH\\n"
+            "to a compatible\\n"
+            "POKEMON."),
+        .importance = I_REUSABLE_TMS,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM126] = // DAZZLING GLEAM
+    {
+        .name = ITEM_NAME("TM126"),
+        .price = 12000,
+        .description = COMPOUND_STRING(
+            "Teaches DAZZLING GLEAM\\n"
+            "to a compatible\\n"
+            "POKEMON."),
         .importance = I_REUSABLE_TMS,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
