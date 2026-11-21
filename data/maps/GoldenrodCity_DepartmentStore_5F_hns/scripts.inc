@@ -140,6 +140,60 @@ GoldenrodDeptStore5_Pokemart:
 	.2byte ITEM_TM_LIGHT_SCREEN
 	.2byte ITEM_TM_REFLECT
 	.2byte ITEM_TM_HYPER_BEAM
+	// Additional all-type TMs (the original 34 are kept above).
+	// NORMAL: power / physical / special
+	.2byte ITEM_TM_BODY_SLAM
+	.2byte ITEM_TM_HYPER_VOICE
+	// FIRE: power / physical / special
+	.2byte ITEM_TM_FLARE_BLITZ
+	// WATER: power / physical / special
+	.2byte ITEM_TM_HYDRO_PUMP
+	.2byte ITEM_TM_LIQUIDATION
+	.2byte ITEM_TM_SCALD
+	// ELECTRIC: power / physical / special
+	.2byte ITEM_TM_WILD_CHARGE
+	// GRASS: power / physical / special
+	.2byte ITEM_TM_LEAF_STORM
+	.2byte ITEM_TM_POWER_WHIP
+	// ICE: power / physical / special
+	.2byte ITEM_TM_ICICLE_CRASH
+	// FIGHTING: power / physical / special
+	.2byte ITEM_TM_CLOSE_COMBAT
+	.2byte ITEM_TM_AURA_SPHERE
+	// POISON: power / physical / special
+	.2byte ITEM_TM_GUNK_SHOT
+	.2byte ITEM_TM_POISON_JAB
+	.2byte ITEM_TM_SLUDGE_BOMB
+	// GROUND: power / physical / special
+	.2byte ITEM_TM_HIGH_HORSEPOWER
+	.2byte ITEM_TM_EARTH_POWER
+	// FLYING: power / physical / special
+	.2byte ITEM_TM_HURRICANE
+	.2byte ITEM_TM_BRAVE_BIRD
+	.2byte ITEM_TM_AIR_SLASH
+	// PSYCHIC: power / physical / special
+	.2byte ITEM_TM_FUTURE_SIGHT
+	.2byte ITEM_TM_ZEN_HEADBUTT
+	// BUG: power / physical / special
+	.2byte ITEM_TM_MEGAHORN
+	.2byte ITEM_TM_X_SCISSOR
+	.2byte ITEM_TM_BUG_BUZZ
+	// ROCK: power / physical / special
+	.2byte ITEM_TM_HEAD_SMASH
+	.2byte ITEM_TM_POWER_GEM
+	// GHOST: power / physical / special
+	.2byte ITEM_TM_POLTERGEIST
+	.2byte ITEM_TM_SHADOW_CLAW
+	// DARK: power / physical / special
+	.2byte ITEM_TM_FOUL_PLAY
+	.2byte ITEM_TM_CRUNCH
+	// STEEL: power / physical / special
+	.2byte ITEM_TM_STEEL_BEAM
+	.2byte ITEM_TM_IRON_HEAD
+	// FAIRY: power / physical / special
+	.2byte ITEM_TM_MOONBLAST
+	.2byte ITEM_TM_PLAY_ROUGH
+	.2byte ITEM_TM_DAZZLING_GLEAM
 	pokemartlistend
 
 GoldenrodDeptStore_Text_5FDirectory:
