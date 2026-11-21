@@ -97,7 +97,39 @@
     F(FLASH_CANNON) \
     F(TRICK_ROOM) \
     F(DRAGON_DANCE) \
-    F(DRACO_METEOR)
+    F(DRACO_METEOR) \
+    F(BODY_SLAM) \
+    F(HYPER_VOICE) \
+    F(FLARE_BLITZ) \
+    F(HYDRO_PUMP) \
+    F(LIQUIDATION) \
+    F(SCALD) \
+    F(WILD_CHARGE) \
+    F(LEAF_STORM) \
+    F(POWER_WHIP) \
+    F(ICICLE_CRASH) \
+    F(CLOSE_COMBAT) \
+    F(AURA_SPHERE) \
+    F(GUNK_SHOT) \
+    F(HIGH_HORSEPOWER) \
+    F(EARTH_POWER) \
+    F(HURRICANE) \
+    F(BRAVE_BIRD) \
+    F(AIR_SLASH) \
+    F(FUTURE_SIGHT) \
+    F(ZEN_HEADBUTT) \
+    F(MEGAHORN) \
+    F(BUG_BUZZ) \
+    F(HEAD_SMASH) \
+    F(POWER_GEM) \
+    F(POLTERGEIST) \
+    F(FOUL_PLAY) \
+    F(CRUNCH) \
+    F(STEEL_BEAM) \
+    F(IRON_HEAD) \
+    F(MOONBLAST) \
+    F(PLAY_ROUGH) \
+    F(DAZZLING_GLEAM)
 
 #define FOREACH_HM(F) \
     F(CUT) \
